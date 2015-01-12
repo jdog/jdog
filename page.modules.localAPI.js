@@ -15,8 +15,8 @@ PAGE.addWait(
 		var dog = ref.remoteAPI
 
 		dog.buildAllSections([
-			"Docs.loader_add"
-			, "Docs.loader_PAGE"
+			"Docs.loader_PAGE"
+			, "Docs.loader_add"
 			, "Docs.loader"
 		])
 
