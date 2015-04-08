@@ -31,7 +31,7 @@
 		, loadList = dog.logs.loaded  = { }    // list all loaded libraries (and where they were used)
 		, waitList = dog.logs.waitQue = { }    // show the loading que, unloaded show as false
 		, waitMap = dog.logs.waitMap  = { }    // reverse look at logs.loaded
-
+		, scriptNumber = 0
 
 
 	// all existential queries are run through here, this is the foundation of the whole thing
@@ -295,12 +295,16 @@
 			, increment = allowCache ? scriptNumber++ : String((Math.random() * 1000)).replace(/\./,"")
 			, fileref = document.createElement( type === "css" ? 'link' : "script"  )
 
-		fileref.type = (type === "css" ? "text/css" : "text/javascript" )
-		fileref.src = pathToFile.replace(/^~/,"") + "?" + increment // increment or randomize
-		fileref.id =  fileId
-
-		if (type === "css")
+		if (type === "css") {
 			fileref.rel = "stylesheet"
+			fileref.type = "text/css"
+			fileref.href = pathToFile.replace(/^~/,"") + "?" + increment // increment or randomize
+		} else {
+			fileref.type = "text/javascript"
+			fileref.src = pathToFile.replace(/^~/,"") + "?" + increment // increment or randomize
+		}
+
+		fileref.id =  fileId
 
 		if (existingElm)
 			existingElm.parentElement.removeChild(existingElm)
@@ -352,9 +356,14 @@
 	// this is used by getType, jQuery is so common it needs it's own type!
 	dog.jQuery = window.jQuery
 
+	document.addEventListener("DOMContentLoaded", function(event) {
+		dog.ready = true
+  })
+
 	dog.version = "3.0.0"
 
 	// jDog and J are psynonymous
 	window.PAGE = window.J = window.jDog = puppy
 
 }())
+
