@@ -1,198 +1,50 @@
-/* PAGE is way of organizing your javascript based app. 
+/* jDog is way of organizing javascript based apps. 
 * Works great across pages, or in single page apps, extensions, etc etc.
+* Can replace or work with libraries like require.js
 * Works great with other libraries like jQuery.
 * Small by design.
-* SEE https://github.com/dogstyle/page
+* SEE https://jdog.io
 * Created by Justin Kempton
-*
-*
-*    ᒌ ᒉ
-*          
-*    ᶿ ᶿ   
-*   \ ᴥ / 
-*     ⋓
-*    
-*
-* This is the loader for the PAGE library, it should either be part of the bundled (compressed javascript) or on the html page itself
-*
 *
 * MIT License
 */
 ;(function() {
 
-var PAGE = (function() {
-
-	var emptyFunction = new Function()
-
-	// check for console
-	if (!window.console) {
-		window.console = {
-			log : emptyFunction
-			, error : emptyFunction
-			, groupCollapsed : emptyFunction
-			, groupEnd : emptyFunction
-			, info : emptyFunction
-			, table : emptyFunction
-		}
-	}
-
 	/* 
-	* the point of PAGE is to be able to open up a javascript console, type PAGE and see everything you've loaded.
-	* For large complex projects this can be very helpful during the debugging process.
-	* In addition, with PAGE.test.js (jdog), you have integrated code coverage testing
-	*
-	* For most things, PAGE.add, PAGE.add$, and PAGE.wait are all you need.
-	*
-	* To add to your PAGE object use PAGE.add("GROUPNAME.THING", THING)
-	*
-	* Example:
-	* PAGE.add("Constructors.MyThing", function(options) {
-	* var dog = {}
-	* return dog
-	* })
+	* the point of jDog is to be able to simplify development of javascript with the console.
+	* Specifically organizing everything into one common global variable.
 	* 
-	* to retrieve instance items use PAGE.wait
-	* for instance properties PAGE.wait("GROUPNAME.THING", function(THING) {})
-	* for prototype PAGE.wait("THING", function(THING) {})
+	* For convenience (window.PAGE, window.J, and window.jDog are interchangeable.
 	*
-	* To add more functionality to PAGE itself, use PAGE.extend(function(puppy, dog, log)
-	* Puppy is the instance, Dog is the Prototype, and Log is for logging.
-	*
-	* for example, adding a function
-	* PAGE.add("Functions.myFunction", function() {
-	* alert("dog is great!")
-	* })
-	*
-	* for example, a singleton, what I commonly call 'Modules'
-	* PAGE.add("Modules.myModule", (function() {
-	* var dog = {}
-	* return dog
-	* })())
-	*
-	* for example, a constructor
-	* PAGE.add("Constructors.MyConstructor", function() {
-	* var dog = {
-	*  love : "trucks"
-	* }
-	* function init() {
-	* alert("dogs love " + dog.love)
-	* }
-	* init()
-	* return dog
-	* })
+	* SEE https://jdog.io for all documentation
 	*
 	*/
 
-	var Page = function(){}                // base constructor
-		, dog = Page.prototype = {}          // base prototype
-		, puppy = new Page()                 // base instance
-		, speedOfInterval = 150              // speed of interval
-		, waitList = dog.waitList = {}       // list of things we are waiting for
-		, finishedCallbacks = []             // array of callbacks to run when everything is loaded
-		, done = dog.done = function(func) { // method to add to finished callback
+	var JDog = function(){}                  // base constructor
+		, dog = JDog.prototype = { logs : {} } // base prototype
+		, puppy = new JDog()                   // base instance
+		, speedOfInterval = 50                 // speed of interval
+		, finishedCallbacks = []               // array of callbacks to run when everything is loaded
+		, done = dog.done = function(func) {   // method to add to finished callback
 			finishedCallbacks.push(func)
 		}
+		, emptyFunction = new Function()
+		, loadList = dog.logs.loaded  = { }    // list all loaded libraries (and where they were used)
+		, waitList = dog.logs.waitQue = { }    // show the loading que, unloaded show as false
+		, waitMap = dog.logs.waitMap  = { }    // reverse look at logs.loaded
 
-	/* internal function calling all done callbacks when everything is finished loading */
-	function runFinishedCallbacks() {
-		if (checkWaitingList()) return
-		for(var x in finishedCallbacks) finishedCallbacks[x](puppy, dog, log)
-	}
 
-	/* methods for checking if finished loading */
-	function checkWaitingList() {
-		var count = 0
-		for(var x in waitList) if (!waitList[x]) count++
-		return count
-	}
 
-	/* logging for everything, gets passed into extend */
-	var log = dog.log = function(thing) {
-		console.log(thing)
-	}
-
-	// store jQuery for instanceof, in case it gets overriden by some other code
-	if (typeof jQuery !== "undefined") {
-		dog.jQuery = jQuery
-	}
-
-	/* this is the method to add stuff to your app, 
-	* example usage: 
-	* PAGE.add("Constructors.MyConstructor", function($root, options) { 
-	* ... 
-	* }) 
-	* */
-	dog.add = function(path, obj) {
-		return dog.spawn(path, obj)
-		// used to be much bigger, was removed yea!
-	}
-
-	/* gather all of the required libraries in an array, push them into the anonymous function */
-	dog.addWait = function(path, arrayOfRequiredLibraries, fun) {
-		dog.batchWaitRef(arrayOfRequiredLibraries, {}, function(ref) {
-			dog.add(path, fun(ref))
-		})
-	}
-
-	/* gather all of the required libraries in an array, push them into the anonymous function */
-	dog.addWait$ = function(path, arrayOfRequiredLibraries, fun) {
-
-		PAGE.waitExists("jQuery", window, function() {
-			$(document).ready(function() {
-				dog.batchWaitRef(arrayOfRequiredLibraries, {}, function(ref) {
-					dog.add(path, fun(ref))
-				})
-			})
-		})
-
-	}
-
-	// allow putting multiple paths into the standard wait function
-	dog.wait = function(/* path, path2, path3, callback, refObj */) {
-		var map = mapArguments(arguments)
-		if (map.Str && map.Obj && !map.Arr) return dog.batchWait.apply(this, arguments)
-		else return waitExists.apply(this, arguments)
-	}
-
-	/* this is for extending the PAGE class itself, giving access to the prototype
-	* example usage
-	* PAGE.extend(function( instance, proto, log ) {
-	* proto.Image = {
-	*   upload : function() {}
-	* }
-	* }) */
-	dog.extend = function extend(callback) {
-		typeof callback === "function" && callback(puppy, dog, log)
-	}
-
-	/* special case for adding stuff after jquery has loaded, we all love jquery!
-	* example usage :
-	* PAGE.add$("Modules.myPage", (function() {
-	* ...
-	* }()))
-	* */
-	dog.add$ = function(path, thing) {
-		var args = arguments
-			, ret = {}
-
-		PAGE.waitExists("jQuery", window, function() {
-			$(document).ready(function() {
-				ret = dog.add.apply(this, args)
-			})
-		})
-
-		return thing
-	}
-
-	/* immediate check to see if something exists, if so, return it, otherwise return undefined
-	* example usage
-	* var shoppingCart = PAGE.exists("Properties.ShoppingCart")
-	*/
-	var exists = dog.exists = function (path, base, alternate) {
+	// all existential queries are run through here, this is the foundation of the whole thing
+	var ex = dog.exists = function (path, base, alternate) {
 		if (typeof path === "undefined" || typeof path === "object") return
+
+		if (path.search(/window\./) === 0)
+			base = window
+
 		var arr = path.split(".")
 			, x = 0
-			, obj = base || puppy
+			, obj = base || puppy // if you want to export this function, change puppy to any default 
 
 		if (arr.length < 1) return alternate
 
@@ -207,12 +59,133 @@ var PAGE = (function() {
 			return alternate
 	}
 
-	/* the inverse of exists is spawn */
-	dog.spawn = function (path, thing, base) {
+
+	// all waiting is done here
+	var waitExists = dog.waitExists = function(/* path, base, func, sourcePath */) {
+		var thing
+			, arg = arguments
+			, limit = 100
+			, count = 0
+			, interval
+			, base, func, sourcePath
+			, path = arg[0]
+
+		// no base defined
+		if (typeof arg[1] === "function") {
+			func = arg[1]
+			sourcePath = arguments[2]
+			base = undefined
+		} else {
+			base = arg[1]
+			func = arg[2]
+			sourcePath = arg[3]
+		}
+
+		var source = getFuncName(sourcePath, arg)
+
+		thing = ex(path, base)
+
+		// adding it to the load list
+		if (!waitMap[source])
+			waitMap[source] = []
+
+		// adding it to the load list
+		if (!loadList[path])
+			loadList[path] = []
+
+		loadList[path].push(source)
+		waitMap[source].push(path)
+
+		waitList[path] = false
+
+		if (thing) {
+			;(func || emptyFunction)(thing)
+			waitList[path] = true
+			runFinishedCallbacks()
+			return puppy
+		}
+		interval = setInterval(function() {
+			count++
+			if (count > limit) {
+				console.trace("could not find " + path)
+				// console.error("could not find " + path)
+				clearInterval(interval)
+				return
+			}
+			var thing = ex(path,base)
+			if (thing) {
+				;(func || emptyFunction)(thing)
+				waitList[path] = true
+				clearInterval(interval)
+				runFinishedCallbacks()
+			}
+		}, speedOfInterval)
+		return puppy
+	}
+
+
+	// this is the main method, split by the arguments
+	dog.wait = function(/* path, path2, path3, refObj, callback */) {
+		var map = mapArguments(arguments)
+		if (map.Arr && map.Obj) return batchWaitRef.apply((this), arguments)
+		if (map.Str && map.Obj && !map.Arr) return batchWait.apply(this, arguments)
+		else return waitExists.apply(this, arguments)
+	}
+
+
+	// internal function to load array elements
+	var batchWaitRef = function(arr, ref, callback, source) {
+
+		var source = getFuncName(source, arguments)
+			, count = 0
+			, ref = ref || {}
+
+		if (!arr.length)
+			(callback || emptyFunction)(ref)
+
+		for (var x = 0; x < arr.length; x++)
+		(function(index, arr) {
+			waitExists(arr[index], function(f) {
+				count += 1
+				var name = arr[index].split(".").reverse()[0]
+				ref[name] = f
+				if (count >= arr.length)
+					(callback || emptyFunction)(ref)
+			}, source)
+		}(x, arr))
+
+		ref.jDog = ref.J = puppy
+
+		return puppy
+	}
+
+
+	// split out items from arguments into array
+	var batchWait = function(/* str, str2, str3, obj, callback */) {
+
+		var arr = [] 
+			, ref = {}
+			, map = mapArguments(arguments)
+			, source = getFuncName("", arguments, map)
+			, callback
+
+		if (map.Fun) callback = map.Fun[0]
+		if (map.Str) arr = map.Str
+		if (map.Obj) ref = map.Obj[0]
+		if (map.Arr) arr.concat(map.Str)
+
+		batchWaitRef(arr, ref, callback, source)
+		return puppy
+	}
+
+
+	// all adding is done using this
+	dog.add = function (path, thing, base) {
+
 		if (typeof path === "undefined" || typeof path === "object") return
 		var arr = path.split(".")
 			, x = 0
-			, obj = base || puppy
+			, obj = base || puppy // again, for exporting this function change puppy
 
 		if (arr.length < 1) return
 
@@ -232,99 +205,47 @@ var PAGE = (function() {
 		}
 	}
 
-	/* waitExists --- wait for something to exist then do something 
-	* oh my, so simple!, perhaps I will replace the other wait features with this one!
-	* this would work for any kind of path
-	*/
-	
-	var waitExists = dog.waitExists = function(path, base, func) {
-		var thing
-			, limit = 100
-			, count = 0
-			, interval
 
-		if (typeof base === "function") {
-			func = base
-			base = undefined
-		}
+	// add, for jQuery fans
+	dog.add$ = function(path, thing) {
+		var args = arguments
 
-		if (path.search(/window\./) === 0) {
-			base = window
-		}
+		dog.waitExists("jQuery", window, function jQueryLoaded () {
+			window.jQuery(document).ready(function documentReady () {
+				dog.add.apply(thing, args)
+			})
+		})
 
-		thing = dog.exists(path, base)
-
-		waitList[path] = false
-
-		if (thing) {
-			typeof func === "function" && func(thing)
-			waitList[path] = true
-			runFinishedCallbacks()
-			return thing
-		}
-		interval = setInterval(function() {
-			count++
-			if (count > limit) {
-				console.error("could not find " + path)
-				clearInterval(interval)
-				return
-			}
-			var thing = dog.exists(path,base)
-			if (thing) {
-				typeof func === "function" && func(thing)
-				waitList[path] = true
-				clearInterval(interval)
-				runFinishedCallbacks()
-			}
-		}, speedOfInterval)
+		return thing
 	}
 
-	/* Load a whole batch of things, pass in array and object, object gets filled by things (by reference), or optionally calls back with the object when it's done. */
-	dog.batchWaitRef = function(arr, ref, callback) {
-		var count = 0
-			, ref = ref || {}
-		for (var x = 0; x < arr.length; x++) {
-			;(function(index, arr) {
-				waitExists(arr[index], function(f) {
-					count += 1
-					var name = arr[index].split(".").reverse()[0]
-					ref[name] = f
-					if (count >= arr.length) {
-						typeof callback === "function" && callback(ref)
-					}
-				})
-			}(x, arr))
-		}
+
+	// gather all of the required libraries in an array, push them into object, then callback( obj -- ref )
+	dog.addWait = function(path, arrayOfRequiredLibraries, fun) {
+		batchWaitRef(arrayOfRequiredLibraries, {}, function(ref) {
+			dog.add(path, fun(ref))
+		}, path)
 		return puppy
 	}
 
-	// this is the lazier, and slower version
-	dog.batchWait = function(/* str, str2, str3, obj, callback */) {
-		var arr = [] 
-			, ref = {}
-			, map = mapArguments(arguments)
-			, callback
 
-		if (map.Fun) callback = map.Fun[0]
-		if (map.Str) arr = map.Str
-		if (map.Obj) ref = map.Obj[0]
-		if (map.Arr) arr.concat(map.Str)
+	// gather all of the required libraries in an array, push them into the anonymous function
+	dog.addWait$ = function(path, arrayOfRequiredLibraries, fun) {
 
-		dog.batchWaitRef(arr, ref, callback)
+		dog.waitExists("jQuery", window, function() {
+			window.jQuery(document).ready(function() {
+				batchWaitRef(arrayOfRequiredLibraries, {}, function(ref) {
+					dog.add(path, fun(ref))
+				}, path)
+			})
+		})
+
+		return puppy
+
 	}
 
-	/* basic method to hide the PAGE object from prying eyes, should be called on done.
-	* But it could be called multiple times, and with complex logic, that when minified will make it tough for
-	* some kind of hacker to understand what your code is doing. Then again, it's javascript, everything is available
-	* so if you really want security, protect the server side code.
-	*
-	* PAGE.done(function() {
-	*   PAGE.stash("secretName")
-	* })
-	*
-	* if you are going to call this in your code, it's important to also save a local reference to the PAGE object, or it will break
-	*/
 
+	// get the type of anything. Common types are shortened
 	var getType = dog.getType = function(thing){
 		var shorten = "StringBooleanArrayObjectNumberFunction"
 			, ret
@@ -337,11 +258,15 @@ var PAGE = (function() {
 			return ret
 	}
 
+
+	// internal function to add to array
 	function pushInObj(name, item, obj) {
 		if (!obj[name]) obj[name] = []
 		obj[name].push(item)
 	}
 
+
+	// create a hash of arguments sorted by type
 	var mapArguments = dog.mapArguments = function(args) {
 		var map = {}
 
@@ -351,20 +276,89 @@ var PAGE = (function() {
 		return map
 	}
 
-	document.addEventListener('DOMContentLoaded', function() {
-		dog.ready = true
-	}, false);
 
-	dog.version = "2.0.2"
+	// method for loading files, currently not used for waiting
+	var loadFile = dog.loadFile = function loadFile (/* pathToFile, allowCache */) {
 
-	// now we return the whole puppy!
-	return puppy
+		var map = dog.mapArguments(arguments)
+			, allowCache = map.Boo ? map.Boo[0] : false
+
+		if (!map.Str) return puppy
+		if (map.Str.length > 1) {
+			for (var x in map.Str) loadFile(map.Str[x], allowCache)
+			return puppy
+		}
+
+		var pathToFile = map.Str[0]
+			, type = pathToFile.slice(-3).toLowerCase()
+			, fileId = pathToFile.replace(/\./g,"_").replace(/\//g, "_").replace(":","")
+			, existingElm = document.getElementById(fileId)
+			, increment = allowCache ? scriptNumber++ : String((Math.random() * 1000)).replace(/\./,"")
+			, fileref = document.createElement( type === "css" ? 'link' : "script"  )
+
+		fileref.type = (type === "css" ? "text/css" : "text/javascript" )
+		fileref.src = pathToFile.replace(/^~/,"") + "?" + increment // increment or randomize
+		fileref.id =  fileId
+
+		if (type === "css")
+			fileref.rel = "stylesheet"
+
+		if (existingElm)
+			existingElm.parentElement.removeChild(existingElm)
+
+		document.getElementsByTagName("head")[0].appendChild(fileref)
+
+		return puppy
+
+	}
+
+
+	// extend jDog
+	dog.extend = function extend(callback) {
+		;(callback || emptyFunction)(puppy, dog)
+		return puppy
+	}
+
+
+	// internal function calling all done callbacks when everything is finished loading
+	function runFinishedCallbacks() {
+		if (checkWaitingList()) return
+		for (var x in finishedCallbacks) finishedCallbacks[x](puppy, dog)
+	}
+
+
+	// used to log the function names used to load libraries
+	// we are using callee.caller here, this feature is being pushed out of javascript in ES5. What a shame when smart people take away cool features
+	function getFuncName(source, args, map) {
+		map = map || mapArguments(args)
+		source = source 
+			|| ex("callee.caller.name", args) 
+			|| ex("callee.caller.caller.name", args) 
+			|| ex("Fun.1.name", map) 
+			|| ex("Fun.0.name", map) 
+			|| "anonymous"
+		return source
+	}
+
+
+	// methods for checking if finished loading to run finished callback(s)
+	function checkWaitingList() {
+		var count = 0
+		for(var x in waitList) if (!waitList[x]) count++
+		return count
+	}
+
+
+	// store jQuery for instanceof, in case it gets overriden by some other code
+	// this is used by getType, jQuery is so common it needs it's own type!
+	dog.jQuery = window.jQuery
+
+	dog.version = "3.0.0"
+
+	// jDog and J are psynonymous
+	window.PAGE = window.J = window.jDog = puppy
 
 }())
 
-// We are going with PAGE here, as the name
-window.PAGE = window.jDog = PAGE
-
-}())
 
 
