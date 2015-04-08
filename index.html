@@ -23,15 +23,34 @@
 <script src="//jdog.github.io/api/page.loader.js"></script>
 <script src="//jdog.github.io/api/page.base.js"></script>
 
-<!-- Documentation files go here -->
-<script src="page.docs.loader_add.js"></script>
-<script src="page.docs.loader_PAGE.js"></script>
-<script src="page.docs.loader.js"></script>
-
 <!-- loads all required files  -->
 <script src="//jdog.github.io/api/page.modules.remoteAPI.js"></script>
 
-<!--  -->
-<script src="page.modules.localAPI.js"></script>
+<script>
+
+	PAGE.addWait(
+		"Modules.localAPI"
+		, [ "Modules.remoteAPI" ] // local inherits from remote
+		, function(ref) {
+
+			var dog = ref.remoteAPI
+
+			PAGE.loadScript(
+				"page.docs.loader_add.js"
+				, "page.docs.loader_PAGE.js"
+				, "page.docs.loader.js"
+			)
+
+			dog.buildAllSections([
+				"Docs.loader_PAGE"
+				, "Docs.loader_add"
+				, "Docs.loader"
+			])
+
+			return dog
+
+		})
+
+</script>
 
 </html>
