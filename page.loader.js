@@ -12,12 +12,11 @@
 
 	/* 
 	* the point of jDog is to be able to simplify development of javascript with the console.
-	* Specifically organizing everything into one common global variable.
+	* Specifically by organizing everything into one common easily accessible global variable.
 	* 
 	* For convenience (window.PAGE, window.J, and window.jDog are interchangeable.
 	*
 	* SEE https://jdog.io for all documentation
-	*
 	*/
 
 	var JDog = function(){}                  // base constructor
@@ -359,6 +358,3 @@
 	window.PAGE = window.J = window.jDog = puppy
 
 }())
-
-
-
