@@ -15,30 +15,33 @@
 	</div>
 
 	<div class="wrapper">
-		<h1>page.loader.js v2.0.3 (<a href="v3.0.0.html">v3.0.0.html</a>)</h1>
+		<h1>page.loader.js v2.0.3 (<a href="/">2.0.3</a>)</h1>
 		<div id="API"></div>
 	</div>
 </body>
 
-<script src="//jdog.github.io/api/page.loader.js"></script>
-<script src="//jdog.github.io/api/page.base.js"></script>
-
-<!-- loads all required files  -->
-<script src="//jdog.github.io/api/page.modules.remoteAPI.js"></script>
+<script src="page.loader.js"></script>
 
 <script>
 
-	PAGE.addWait(
+	// for compatibility with older code which referenced removed methods
+	J.loadScript = J.loadStyle = J.loadFile
+	J.spawn = J.add
+
+	// loads all required files
+	J.loadFile( "//jdog.github.io/api/page.modules.remoteAPI.js", true)
+
+	J.addWait(
 		"Modules.localAPI"
 		, [ "Modules.remoteAPI" ] // local inherits from remote
 		, function(ref) {
 
 			var dog = ref.remoteAPI
 
-			PAGE.loadScript(
-				"page.docs.loader_add.js"
-				, "page.docs.loader_PAGE.js"
-				, "page.docs.loader.js"
+			J.loadFile(
+				"page.docs.loader_add.3.0.0.js"
+				, "page.docs.loader_PAGE.3.0.0.js"
+				, "page.docs.loader.3.0.0.js"
 			)
 
 			dog.buildAllSections([
