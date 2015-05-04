@@ -20,6 +20,7 @@
 
 	var timerText = "finished loading"
 		, emptyFunction = new Function()
+		, preset = window.jdog_preset || {}
 
 	function ifConsole(fun) {
 		if (window.console) return (fun || emptyFunction)()
@@ -34,7 +35,8 @@
 	var JDog = function(){}                          // base constructor
 		, dog = JDog.prototype = { logs : {}, _ : {} } // base prototype
 		, puppy = new JDog()                           // base instance
-		, speedOfInterval = 30                         // speed of interval called during waiting
+		, speedOfInterval = preset.speedOfInterval || 30 // speed of interval called during waiting
+		, limit = preset.limit || 500
 		, onceCallbacks = []
 		, d = document
 		, snap = dog._.snap = {}
@@ -42,7 +44,7 @@
 		, waitList = dog.logs.waitQue = { }    // show the loading que, unloaded show as false
 		, waitMap  = dog.logs.waitMap = { }    // reverse look at logs.loaded
 		, scriptNumber = 0                     // used while loading css / scripts
-		, useMap = dog._.useMap = {}           // see dog.use, loads then applys function with parameters
+		, useMap = dog._.useMap = preset.useMap || {} // see dog.use, loads then applys function with parameters
 
 
 	dog.done = function(onceCB) {   // method to add to finished callback
@@ -62,7 +64,7 @@
 
 	dog.changeRoot = function(root) {
 
-		root = root || dog._.t || "/Scripts/jdogTest/"
+		root = root || dog._.t || "/Scripts/test/"
 
 		// if you call this named function with use, load this script then wait and run it
 		dog._.t = root                    // base url for testScripts
@@ -105,7 +107,6 @@
 	var waitExists = dog.waitExists = function(/* path, base, func, sourcePath */) {
 		var thing
 			, arg = arguments
-			, limit = 500
 			, count = 0
 			, interval
 			, base, func, sourcePath
@@ -150,7 +151,7 @@
 			if (count > limit) {
 
 				ifConsole(function() {
-					console.error("could not find " + path)
+					console.warn(source + " could not find " + path)
 				})
 
 				clearInterval(interval)
