@@ -21,34 +21,40 @@
 	var timerText = "finished loading"
 		, emptyFunction = new Function()
 		, preset = window.jdog_preset || {}
-		, hidden = preset.hidden ? { } : null
 
 	function ifConsole(fun) {
-		if (window.console) return (fun || emptyFunction)()
+
+		var check = window.console
+
+		if (!check)
+			return false
+
+		var needs = String("groupCollapsed log dir timeEnd groupEnd time error").split(" ")
+
+		while (needs.length)
+			if (!check[ needs.shift() ]) return false
+
+		return (fun || emptyFunction)()
 	}
 
 	ifConsole( function() {
-		if (!hidden) {
-			console.groupCollapsed("%c犬%cJ%cDOҨ", "font-size:60px; font-weight:400 ", "padding-left:5px; font-size:55px; font-weight:400 ", "font-size:55px; color:rgb(117,228,29); padding-right:10px; font-weight:400 ")
-			console.time(timerText)
-		}
+		console.groupCollapsed("%c犬%cJ%cDOҨ", "font-size:60px; font-weight:400 ", "padding-left:5px; font-size:55px; font-weight:400 ", "font-size:55px; color:rgb(117,228,29); padding-right:10px; font-weight:400 ")
+		console.time(timerText)
 	})
 
-	var JDog = function(){} // base constructor
-		, dog = JDog.prototype = { } // base prototype
-		, logs = hidden ? {} : dog.logs = {}
-		, _ = hidden ? {} : dog._ = {}
+	var JDog = function(){}                          // base constructor
+		, dog = JDog.prototype = { logs : {}, _ : {} } // base prototype
 		, puppy = new JDog()                           // base instance
-		, speedOfInterval = preset.speedOfInterval || 30 // speed of interval called during waiting
+		, speedOfInterval = preset.speedOfInterval || 100 // speed of interval called during waiting
 		, limit = preset.limit || 500
 		, onceCallbacks = []
 		, d = document
-		, snap = _.snap = {}
-		, loadList = logs.loaded  = { }    // list all loaded libraries (and where they were used)
-		, waitList = logs.waitQue = { }    // show the loading que, unloaded show as false
-		, waitMap  = logs.waitMap = { }    // reverse look at logs.loaded
+		, snap = dog._.snap = {}
+		, loadList = dog.logs.loaded  = { }    // list all loaded libraries (and where they were used)
+		, waitList = dog.logs.waitQue = { }    // show the loading que, unloaded show as false
+		, waitMap  = dog.logs.waitMap = { }    // reverse look at logs.loaded
 		, scriptNumber = 0                     // used while loading css / scripts
-		, useMap = _.useMap = preset.useMap || {} // see dog.use, loads then applys function with parameters
+		, useMap = dog._.useMap = preset.useMap || {} // see dog.use, loads then applys function with parameters
 
 
 	dog.done = function(onceCB) {   // method to add to finished callback
@@ -56,7 +62,6 @@
 	}
 
 	dog.done(function() {
-		if (hidden) return
 		ifConsole(function() {
 			console.dir(J)
 			console.timeEnd(timerText)
@@ -69,14 +74,14 @@
 
 	dog.changeRoot = function(root) {
 
-		root = root || _.t || "/Scripts/test/"
+		root = root || dog._.t || "/Scripts/test/"
 
 		// if you call this named function with use, load this script then wait and run it
-		_.t = root                    // base url for testScripts
-		useMap["test.attach"] = useMap["test.setTests"] = _.t + "j.test.attach.js"
+		dog._.t = root                    // base url for testScripts
+		useMap["test.attach"] = useMap["test.setTests"] = dog._.t + "j.test.attach.js"
 
 		for (var tm = String("test.runTest,test.run").split(','); tm.length;)
-			useMap[ tm.shift() ] = _.t + "j.test.js"
+			useMap[ tm.shift() ] = dog._.t + "j.test.js"
 
 		return puppy
 	}
@@ -92,7 +97,7 @@
 
 		var arr = path.split(".")
 			, x = 0
-			, obj = (base === puppy && hidden) ? hidden : base || hidden || puppy
+			, obj = base || puppy // if you want to export this function, change puppy to any default
 
 		if (arr.length < 1) return alternate
 
@@ -241,7 +246,7 @@
 			defaultBase = dog
 			path = path.substr(1)
 		} else {
-			defaultBase = hidden || puppy
+			defaultBase = puppy
 		}
 
 		if (typeof path === "undefined" || typeof path === "object") return
@@ -467,18 +472,19 @@
 		return count
 	}
 
+
+	// store jQuery for instanceof, in case it gets overriden by some other code
+	// this is used by getType, jQuery is so common it needs it's own type!
+	dog._.jQuery = window.jQuery
+
 	d.addEventListener("DOMContentLoaded", function(event) {
 		dog.DomContentLoaded = true
-		
-		// store jQuery for instanceof, in case it gets overriden by some other code
-		// this is used by getType, jQuery is so common it needs it's own type!
-		_.jQuery = window.jQuery
-
   })
 
-	_.version = "3.1.1"
+	dog._.version = "3.1.0"
 
 	// jDog and J are psynonymous
 	window.PAGE = window.J = puppy
 
 }())
+
