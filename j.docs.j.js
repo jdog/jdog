@@ -4,18 +4,16 @@ J.add("Docs.J", {
 
 	, "Methods" : [
 
-
 		{
-			"Name" : "J"
+			"Name" : "jDog"
 			, "Source" : [ "jdog.js" ]
 			, "Parent" : [ "Base" ]
 			, "Tags" : ["about", "loader"]
 			, "Description" : [
 
-				"jDog or simply J, is the single global variable from which all of your project code should spring from. By stuffing everything into one explorable variable, J, you can dramatically simplifies the process of building and debugging your project. Functions and Constructors can be easily tested in the console. If you haven't worked on the project in awhile, as often happens, having a single variable helps familiarize yourself with the overall structure of your javascript."
-				, "Load jdog.js first with either inline or external script. By design it is very small, 4k uncompressed minified."
-				, "<hr>"
-				, "jDog differs from AMD style loading, jDog is superior to AMD!"
+				"jDog or simply J, creates a single global variable from which all of your project code can spring from. By stuffing everything into one explorable variable, J, you can dramatically simplify the process of building and debugging your project. Functions and Constructors can be easily tested in the console, and documentation is easier to generate and share."
+				, "Load jdog.js first either inline or as an external script. By design it is very small, 4k uncompressed minified."
+				, "jDog differs from AMD style loading, in many ways jDog is superior to AMD!"
 				, "Bold claim? For backend javascript development using require() syntax makes sense. But in front end development where different modules or functions or constructors may load at different times, and with different payloads, and themselves require other libraries, writing require('nameOfLibrary') does not make sense at all."
 				, "Require.js tackles this problem, but it does it in a way that makes bundling difficult. Bundling scripts for those who do not know, is a process of grouping scripts into a single minified and compressed file to increase speed of the page. Most developers who use require.js for front end developement skip the step of bundling their javascript, costing a 40% or greater increase in bandwidth, not to mention speed."
 				, "The weakness is that AMD, ie Require.js assumes that a module is only a single file, with some kind of imports and exports. Even the modern ES6 uses a similar scheme, much closer to the Node way, but still, absent the power to bundle and save bandwidth. Why not just fix the problem? If you could name your Modules, add them to a namespace, then the file loading part can be done through the bundle or as script tags. That is what jDog does."
@@ -33,9 +31,10 @@ J.add("Docs.J", {
 				, "J.getType" : "Utility to get the type of anything passed in, see below."
 				, "J.mapArguments" : "Utility to group all like arguments from an arguments object."
 				, "J.extend" : "Extend or overwrite J functionality itself."
-				, "_" : "Place to stash other notable logs and things like it"
-				, "_.logs.waitQue" : "Lists all of the 'Modules' being waited for and their state"
-				, "_.logs.waitList" : "Lists all of the 'Modules' being waited for and their state"
+				, "J.logs.loaded" : "List of loaded 'Modules' and where they are waited for."
+				, "J.logs.waitQue" : "Lists all of the 'Modules' being waited for and their state"
+				, "J.logs.waitMap" : "Lists what functions are waiting for."
+				, "J.use" : "Loads and then applies a mapped function with parameters."
 			}
 
 			, "Examples" : [
@@ -46,10 +45,9 @@ J.add("Docs.J", {
 		, {
 			"Name" : "add"
 			, "Usage" : [
-					[ "string Path", "expression Thing" ]
-					, [ "string Path", "expression Thing", "optional string TestFile+" ]
+					[ "string Path", "expression Thing", "object Base", "bool Silent" ]
 				]
-			, "Tags" : [ "spawn", "test", "synchronous" ]
+			, "Tags" : [ "test", "synchronous" ]
 			, "Source" : [ "jdog.js" ]
 			, "Parent" : [ "Base" ]
 			, "Examples" : [
@@ -66,7 +64,8 @@ J.add("Docs.J", {
 			, "Definitions" : {
 				"Path" : "Path of the item added, example 'Constructors.YourConstructor'"
 				, "Thing" : "Any expression, ie code that resolves to a value"
-				, "TestFile" : "This is totally optional and only used if page.test.js has been loaded"
+				, "Base" : "Base object to add to"
+				, "Silent" : "Silent will prevent internal snapshot from being generated."
 			}
 			, "Returns" : "Thing"
 		}
@@ -89,7 +88,7 @@ J.add("Docs.J", {
 				, "WaitList" : "Array - list of other libraries required before callback is called"
 				, "Callback" : "Function to call when all is loaded"
 			}
-			, "Returns" : "Undefined"
+			, "Returns" : "J"
 		}
 
 		, {
@@ -110,13 +109,14 @@ J.add("Docs.J", {
 				, "WaitList" : "Array - list of other libraries required before callback is called"
 				, "Callback" : "Function to call when all is loaded"
 			}
-			, "Returns" : "Undefined"
+			, "Returns" : "J"
 		}
 
 		, {
 			"Name" : "extend"
 			, "Usage" : [
-					[ "function( puppy, dog, log ) { ... }" ]
+					[ "function( puppy, dog ) { ... }" ]
+					, [ "function( instance, proto ) { ... }" ]
 				]
 			, "Tags" : [ "extend", "module pattern", "extensions", "asynchronous" ]
 			, "Source" : [ "jdog.js" ]
@@ -124,7 +124,7 @@ J.add("Docs.J", {
 			, "Examples" : [
 				"J.extend(function(puppy, dog, log) {})"
 				, "J.extend(function(inst, proto, log) {})"
-				, "J.extend(function(inst, proto, log) {\n\n J.spawn(\"ext.events\", function(dog, eventMap) {\n\n  eventMap = eventMap || { }\n\n  dog.events = eventMap\n\n  dog._uniqueEventMap = { }\n\n  // name of event, function to be called on triggerEvent(name)\n  // events are unique, checking both the string of the function, \n  // and the callee.caller string as a key\n  dog.addEvent = function(name, func) {\n   var index\n   , key = func.toString() + arguments.callee.caller.toString()\n\n   // if the event type does not exist yet, create it\n   if (!dog.events[name]) dog.events[name] = []\n\n   if (!dog._uniqueEventMap[name]) dog._uniqueEventMap[name] = {}\n\n   // get the index from the array if there, otherwise undefined\n   index = dog._uniqueEventMap[name][key]\n\n   if (index !== undefined) {\n    // adds the function to the array, replacing the older one\n    dog.events[name].splice(index, 1, func)\n    return dog\n   } else {\n    index = dog.events[name].push(func)\n   }\n\n   // now add the index to the key\n   dog._uniqueEventMap[name][key] = (index-1)\n   return dog\n  }\n\n  dog.emptyEvent = function(name) {\n   if (!dog.events[name]) return\n   dog.events[name].length = 0\n  }\n\n  // triggers the functions within the named event array\n  dog.triggerEvent = function(name, args) {\n\n   if (!dog.events[name]) return\n   var events = dog.events[name]\n\n   // args = args || []\n   args = Array.prototype.slice.call(arguments)\n   args.splice(0,1)\n\n   if (events.length) {\n    for (var x in events) \n      (typeof events[x] === \"function\" && events[x].apply(this, args ))\n   }\n   return dog\n  }\n\n\n}, proto)\n\n})"
+				, "J.extend(function(inst, proto, log) {\n\n J.add(\"ext.events\", function(dog, eventMap) {\n\n  eventMap = eventMap || { }\n\n  dog.events = eventMap\n\n  dog._uniqueEventMap = { }\n\n  // name of event, function to be called on triggerEvent(name)\n  // events are unique, checking both the string of the function, \n  // and the callee.caller string as a key\n  dog.addEvent = function(name, func) {\n   var index\n   , key = func.toString() + arguments.callee.caller.toString()\n\n   // if the event type does not exist yet, create it\n   if (!dog.events[name]) dog.events[name] = []\n\n   if (!dog._uniqueEventMap[name]) dog._uniqueEventMap[name] = {}\n\n   // get the index from the array if there, otherwise undefined\n   index = dog._uniqueEventMap[name][key]\n\n   if (index !== undefined) {\n    // adds the function to the array, replacing the older one\n    dog.events[name].splice(index, 1, func)\n    return dog\n   } else {\n    index = dog.events[name].push(func)\n   }\n\n   // now add the index to the key\n   dog._uniqueEventMap[name][key] = (index-1)\n   return dog\n  }\n\n  dog.emptyEvent = function(name) {\n   if (!dog.events[name]) return\n   dog.events[name].length = 0\n  }\n\n  // triggers the functions within the named event array\n  dog.triggerEvent = function(name, args) {\n\n   if (!dog.events[name]) return\n   var events = dog.events[name]\n\n   // args = args || []\n   args = Array.prototype.slice.call(arguments)\n   args.splice(0,1)\n\n   if (events.length) {\n    for (var x in events) \n      (typeof events[x] === \"function\" && events[x].apply(this, args ))\n   }\n   return dog\n  }\n\n\n}, proto)\n\n})"
 			]
 			, "Description" : "This is a function to extend the jDog library. Within the callback are three objects which allow you to overwrite or extend the functionality of jDog itself. Many extensions have already been created, and we hope many more will be made in the future."
 			, "Definitions" : {
@@ -134,28 +134,6 @@ J.add("Docs.J", {
 				, "Log" : "Console logging functionaity"
 			}
 			, "Returns" : "Undefined"
-		}
-
-		, {
-			"Name" : "add$"
-			, "Usage" : [
-					[ "Path", "Thing" ]
-				]
-			, "Tags" : [ "spawn", "test", "asynchronous" ]
-			, "Source" : [ "jdog.js" ]
-			, "Parent" : [ "Base" ]
-			, "Examples" : [
-				"J.add$('Modules.login', ( function(){\n\n  var dog = {\n    $root : $(\"#API\")\n    , $links : $(\"#API .sideBar a\")\n  }\n  , ref = dog.ref = { }\n\n  function init() {\n    // do something usefull with these\n    ref.LocalStorage\n    ref.dataService\n  }\n\n  J.wait(\n    \"Constructors.LocalStorage\"\n    , \"Modules.dataService\"\n    , ref\n    , init)\n\n  return dog\n\n}()))"
-			]
-			, "Description" : [
-				"Combines the functionality of 'add' with jQuery ready. This is a very useful feature for jQuery users as it signals it's safe to call the $ (jQuery) variable. However, notice that unlike J.add, add$ returns undefined."
-				, "add$ departs from the AMD style of first waiting for required items before running the callback. It does instead the lazy dog style of creating itself and then modifying itself once external libraries are ready."
-			]
-			, "Definitions" : {
-				"Path" : "Path of the item added, example 'Constructors.YourConstructor'"
-				, "Thing" : "Any variable or literal"
-			}
-			, "Returns" : "undefined"
 		}
 
 		, {
