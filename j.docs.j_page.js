@@ -1,29 +1,29 @@
-PAGE.add("Docs.loader_PAGE", {
-
+PAGE.add("Docs.jDog", {
 	"jDog" : "version 3.0.0"
 	, "Methods" : [
 		{
-			"Name" : "PAGE || J"
-			, "Source" : [ "page.loader.js" ]
+			"Name" : "Why"
+			, "Source" : [ "jdog.js" ]
 			, "Parent" : [ "Base" ]
 			, "Tags" : ["about", "loader"]
 			, "Description" : [
 
-				"PAGE is the single global variable from which all of your projects code springs from. By stuffing everything into one explorable variable, PAGE, it dramatically simplifies the process of building and debugging your project. Functions and Constructors can be easily tested in the console. If you haven't worked on the project in awhile, as often happens, having a single variable helps familiarize yourself with the overall structure of your javascript."
-				, "jDog aka PAGE aka J is a javascript library to organize and structure your scripts. It is also a pattern for developing code with consistant structure. As a growing body of scripts which interact with each other consistently it also is a way of modularizing your workflow."
-				, "<b>page.loader.js</b> is the first file to load for all other jDog scripts to work correctly. It must load before <i>page.base.js</i> and all other extensions. By design it is very small, 4k uncompressed minified. This code can be added inline to the HTML itself."
-			]
+				"jDog or simply J creates a single global variable from which all project code can spring. By stuffing everything into one explorable variable, J dramatically simplifies the process of building and debugging your project. Functions can be easily tested in the console, Properties checked, documentation created etc."
+				, "<code>Open your console, take a look right now!</code>"
+				, "Load jdog.js either inline or as an external script. By design it is very small, 4k uncompressed minified for lightning fast client side javascript."
+				, "<h4>Front end JavaScript module loading landscape</h4>"
+				, "AMD module loading is close to being the standard for client side javascript (Requirejs). ES6 will ship with import and export functionality. But that does not mean a more refined and elegant approach is not possible, or even needed."
+				, "jDog differs from AMD style loading in many ways that make it superior. So superior in fact, it's worth checking it out to see for yourself."
+				, "<h4>Bold claim?</h4>"
+				, "For nodejs development require() syntax makes sense. Everything is loaded ahead of time. But in front end development where different modules or functions or constructors may load at different times, and with different payloads, blocking the UI to wait for files to load is a bad practice."
+				, "Require.js tackles this problem well with it's callback of required items, but it does it in a way that makes bundling difficult. In addition the library being loaded must conform to the AMD pattern. Many jQuery plugins or similar code not written this way simply wont work, or must be adapted to work."
+				, "<h4>require loads, jdog waits</h4>"
+				, "jDog takes a different approach. Instead of the main benefit being loading of modules, JDog waits for things to be loaded within objects."
+				, "<h4>traversing objects made easy</h4>"
+				, "<code>J.exists('window.long.path.to.very.deep.property')</code>"
+				, "All files, scripts etc etc need to add themselves somewhere within the window object. JDog can find if they exist. It can also wait until they exist then fire a callback. That's in nutshell how it all works."
+				, "There are many other ways in which jDog greatly improves and takes the javascript module loading pattern to the next level."
 
-			, "Definitions" : {
-				"page.loader.js" : "Primary source for the PAGE object and functionality"
-				, "Extensions" : "Add functionality to PAGE itself"
-				, "Constructors" : "Functions that generate stateful Objects"
-				, "Modules" : "Singleton stateful objects within the PAGE namespace"
-				, "Functions" : "Stateless scripts"
-			}
-
-			, "Examples" : [
-				"// put this towards the top of the page, in the head \n&#x3c;script src=\"page.loader.js\"&#x3e;&#x3c;/script&#x3e;"
 			]
 		}
 	]

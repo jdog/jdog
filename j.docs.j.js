@@ -5,138 +5,6 @@ J.add("Docs.J", {
 	, "Methods" : [
 
 		{
-			"Name" : "jDog"
-			, "Source" : [ "jdog.js" ]
-			, "Parent" : [ "Base" ]
-			, "Tags" : ["about", "loader"]
-			, "Description" : [
-
-				"jDog or simply J, creates a single global variable from which all of your project code can spring from. By stuffing everything into one explorable variable, J, you can dramatically simplify the process of building and debugging your project. Functions and Constructors can be easily tested in the console, and documentation is easier to generate and share."
-				, "Load jdog.js first either inline or as an external script. By design it is very small, 4k uncompressed minified."
-				, "jDog differs from AMD style loading, in many ways jDog is superior to AMD!"
-				, "Bold claim? For backend javascript development using require() syntax makes sense. But in front end development where different modules or functions or constructors may load at different times, and with different payloads, and themselves require other libraries, writing require('nameOfLibrary') does not make sense at all."
-				, "Require.js tackles this problem, but it does it in a way that makes bundling difficult. Bundling scripts for those who do not know, is a process of grouping scripts into a single minified and compressed file to increase speed of the page. Most developers who use require.js for front end developement skip the step of bundling their javascript, costing a 40% or greater increase in bandwidth, not to mention speed."
-				, "The weakness is that AMD, ie Require.js assumes that a module is only a single file, with some kind of imports and exports. Even the modern ES6 uses a similar scheme, much closer to the Node way, but still, absent the power to bundle and save bandwidth. Why not just fix the problem? If you could name your Modules, add them to a namespace, then the file loading part can be done through the bundle or as script tags. That is what jDog does."
-
-			]
-
-			, "Definitions" : {
-				"jdog.js" : "Primary source for the J object and functionality"
-				, "window.J or J" : "How to access and explor the jDog object"
-				, "window.PAGE or PAGE" : "Same as window.J"
-				, "J.add" : "Add a path to J object or to the object passed in."
-				, "J.exists" : "Checks if a path exists against J or the object passed in"
-				, "J.wait" : "Waits for a path to exist, or paths, passing them into an object and callback."
-				, "J.addWait" : "Wait for some paths to exists, then add this new thing to J, or object you pass in."
-				, "J.getType" : "Utility to get the type of anything passed in, see below."
-				, "J.mapArguments" : "Utility to group all like arguments from an arguments object."
-				, "J.extend" : "Extend or overwrite J functionality itself."
-				, "J.logs.loaded" : "List of loaded 'Modules' and where they are waited for."
-				, "J.logs.waitQue" : "Lists all of the 'Modules' being waited for and their state"
-				, "J.logs.waitMap" : "Lists what functions are waiting for."
-				, "J.use" : "Loads and then applies a mapped function with parameters."
-			}
-
-			, "Examples" : [
-				"// put this towards the top of the page, in the head \n&#x3c;script src=\"jdog.js\"&#x3e;&#x3c;/script&#x3e;"
-			]
-		}
-
-		, {
-			"Name" : "add"
-			, "Usage" : [
-					[ "string Path", "expression Thing", "object Base", "bool Silent" ]
-				]
-			, "Tags" : [ "test", "synchronous" ]
-			, "Source" : [ "jdog.js" ]
-			, "Parent" : [ "Base" ]
-			, "Examples" : [
-				"J.add('Constructors.Login', function( $root, options ){  \n   var exports = {\n     $root : $root\n     , options : options\n   }\n\n  function privateFunction() {\n  }\n\n  exports.publicFunction = function() {\n  }\n\n   return exports \n })"
-				, "// assuming Select2 was defined in the same file above\nJ.add('Lib.Select2', Select2)"
-				, "J.add('Modules.home', (function(){  ...  }()))"
-				, "J.add('Properties.UserId', 12345)"
-				, "J.add('BaseClass', BaseClass(1234))"
-				, "J.add('BaseClass.ticker', new Ticker('tickerDiv'))"
-				, "// example returning \nvar ticker = J.add('BaseClass.ticker', new Ticker('tickerDiv'))"
-				, "J.add(\"Constructors.Login\", function($form, options) {\n\n options.showError = options.showError || false\n\n var dog = {\n  $form : $form\n  , $html : undefined // see below\n  , options : options\n }\n , ref = dog.ref = { }\n\n // employs the J events extension \n J.ext.events(dog, {\n  Success : []\n  , Fail : []\n })\n\n function build() {\n  var html = ''\n\n  html += \"&#x3c;div class='pad'&#x3e;\"\n  html += \"&#x3c;div class='row'&#x3e;\"\n  html += \"&#x3c;input type='text' name='UserName' /&#x3e;\"\n  html += \"&#x3c;/div&#x3e;\"\n  html += \"&#x3c;div class='row'&#x3e;\"\n  html += \"&#x3c;input type='text' name='Password' /&#x3e;\"\n  html += \"&#x3c;/div&#x3e;\"\n  html += \"&#x3c;div class='row'&#x3e;\"\n  html += \"&#x3c;button&#x3e;Submit&#x3c;/button&#x3e;\"\n  html += \"&#x3c;/div&#x3e;\"\n  html += \"&#x3c;/div&#x3e;\"\n\n  dog.$form.empty()\n  dog.$html = $(html).appendTo(dog.$form)\n }\n\n function events() {\n\n  ref.Validation(dog.$form, function success(data) {\n   dog.triggerEvent(\"Success\", data.id, data.name)\n  }, function fail(msg, err) {\n   dog.triggerEvent(\"Fail\", msg, err)\n  })\n\n }\n \n function init() {\n  build()\n  events()\n }\n\n J.wait(\n  \"Modules.dataService.read\"\n  , \"Constructors.Validation\"\n  , ref\n  , init)\n\n return dog\n\n})\n"
-			]
-			, "Description" : "This is the foundation of adding new items into the global name space. It's mean't to be extremely fast and flexible to add. If you have existing code for example, you can always add it after the fact as many of the following examples will demonstrate."
-			, "Definitions" : {
-				"Path" : "Path of the item added, example 'Constructors.YourConstructor'"
-				, "Thing" : "Any expression, ie code that resolves to a value"
-				, "Base" : "Base object to add to"
-				, "Silent" : "Silent will prevent internal snapshot from being generated."
-			}
-			, "Returns" : "Thing"
-		}
-
-
-		, {
-			"Name" : "addWait"
-			, "Usage" : [
-					[ "string Path", "array WaitList", "function Callback" ]
-				]
-			, "Tags" : [ "wait", "module pattern", "asynchronous" ]
-			, "Source" : [ "jdog.js" ]
-			, "Parent" : [ "Base" ]
-			, "Examples" : [
-				"J.addWait( \n  'Modules.homePage' // path of thing being added \n  , [\n      'ajax'\n      , 'ready'\n      , 'Constructors.APIMethods'\n  ]\n  , function(ref) {\n \n   var exports = { \n     apiMethods : undefined // see below\n   }\n\n   exports.loadPage = function() {\n     ref.ajax(\"/pathToSomething\", {}, function(data) {\n       // ... lots of your code here\n       exports.apiMethods = ref.APIMethods(data)\n     })\n   }\n \n   return exports \n \n  })"
-			]
-			, "Description" : "Combines the functionality of add and wait into one function. This is useful for creating modules. For those familiar with requirejs this has an almost identical format, with the exception that the callback returns a single object instead of a list of arguments. This format is superior in many ways, as it is nolonger necessary to duplicate the names, or keep track of the order of arguments."
-			, "Definitions" : {
-				"Path" : "String - Path of the library item required, example 'Constructors.YourConstructor'"
-				, "WaitList" : "Array - list of other libraries required before callback is called"
-				, "Callback" : "Function to call when all is loaded"
-			}
-			, "Returns" : "J"
-		}
-
-		, {
-			"Name" : "addWait$"
-			, "Usage" : [
-					[ "string Path", "array WaitList", "function Callback" ]
-				]
-			, "Tags" : [ "wait", "module pattern", "jQuery", "asynchronous" ]
-			, "Source" : [ "jdog.js" ]
-			, "Parent" : [ "Base" ]
-			, "Examples" : [
-				"J.addWait$(\n 'Modules.jdogAPI'\n , [\n  'ajax'\n  , 'ready'\n  , 'Constructors.APIMethod'\n ],\n function(ref){ ... }))"
-				, "J.addWait$(\n \"Modules.home\"\n , [\n  \"Constructors.Validation\"\n  , \"Modules.tracking\"\n ]\n , function(ref) {\n\n  var dog = {\n   $loginForm : $(\"#LoginForm\")\n   , $submit : $(\"#LoginForm button.Submit\")\n  }\n\n  function events() {\n\n   dog.validation = ref.Validation(\n    $(\"#LoginForm\")\n    , function success(data) {\n     ref.tracking.track(\n      \"Submit Success\"\n      , data\n      , function() { window.location = \"/dashboard\" })\n    }\n    , function fail() {\n     ref.tracking.track(\"Submit Failed\") \n    })\n\n   dog.$loginForm.submit(function() {\n    ref.tracking.track(\"Submit\") \n   })\n\n  }\n\n  events()\n\n  return dog\n\n })\n"
-			]
-			, "Description" : "Combines the functionality of addWait with jQuery's document.ready. This is a useful function for creating modules with jQuery support."
-			, "Definitions" : {
-				"Path" : "String - Path of the library item required, example 'Constructors.YourConstructor'"
-				, "WaitList" : "Array - list of other libraries required before callback is called"
-				, "Callback" : "Function to call when all is loaded"
-			}
-			, "Returns" : "J"
-		}
-
-		, {
-			"Name" : "extend"
-			, "Usage" : [
-					[ "function( puppy, dog ) { ... }" ]
-					, [ "function( instance, proto ) { ... }" ]
-				]
-			, "Tags" : [ "extend", "module pattern", "extensions", "asynchronous" ]
-			, "Source" : [ "jdog.js" ]
-			, "Parent" : [ "Base" ]
-			, "Examples" : [
-				"J.extend(function(puppy, dog, log) {})"
-				, "J.extend(function(inst, proto, log) {})"
-				, "J.extend(function(inst, proto, log) {\n\n J.add(\"ext.events\", function(dog, eventMap) {\n\n  eventMap = eventMap || { }\n\n  dog.events = eventMap\n\n  dog._uniqueEventMap = { }\n\n  // name of event, function to be called on triggerEvent(name)\n  // events are unique, checking both the string of the function, \n  // and the callee.caller string as a key\n  dog.addEvent = function(name, func) {\n   var index\n   , key = func.toString() + arguments.callee.caller.toString()\n\n   // if the event type does not exist yet, create it\n   if (!dog.events[name]) dog.events[name] = []\n\n   if (!dog._uniqueEventMap[name]) dog._uniqueEventMap[name] = {}\n\n   // get the index from the array if there, otherwise undefined\n   index = dog._uniqueEventMap[name][key]\n\n   if (index !== undefined) {\n    // adds the function to the array, replacing the older one\n    dog.events[name].splice(index, 1, func)\n    return dog\n   } else {\n    index = dog.events[name].push(func)\n   }\n\n   // now add the index to the key\n   dog._uniqueEventMap[name][key] = (index-1)\n   return dog\n  }\n\n  dog.emptyEvent = function(name) {\n   if (!dog.events[name]) return\n   dog.events[name].length = 0\n  }\n\n  // triggers the functions within the named event array\n  dog.triggerEvent = function(name, args) {\n\n   if (!dog.events[name]) return\n   var events = dog.events[name]\n\n   // args = args || []\n   args = Array.prototype.slice.call(arguments)\n   args.splice(0,1)\n\n   if (events.length) {\n    for (var x in events) \n      (typeof events[x] === \"function\" && events[x].apply(this, args ))\n   }\n   return dog\n  }\n\n\n}, proto)\n\n})"
-			]
-			, "Description" : "This is a function to extend the jDog library. Within the callback are three objects which allow you to overwrite or extend the functionality of jDog itself. Many extensions have already been created, and we hope many more will be made in the future."
-			, "Definitions" : {
-				"J" : "J is a global variable with both instance properties and prototype properties"
-				, "Puppy" : "These are the instance properties (which can also access prototype)"
-				, "Dog" : "This is the prototype for J itself"
-				, "Log" : "Console logging functionaity"
-			}
-			, "Returns" : "Undefined"
-		}
-
-		, {
 			"Name" : "exists"
 			, "Usage" : [
 					[ "Path" ]
@@ -185,6 +53,122 @@ J.add("Docs.J", {
 			}
 			, "Returns" : "undefined"
 		}
+
+
+		, {
+			"Name" : "wait"
+			, "Usage" : [
+					[ "string Path", "function Callback" ]
+					, [ "string Path+", "object Ref", "function Callback" ]
+				]
+			, "Tags" : [ "wait", "asynchronous" ]
+			, "Source" : [ "jdog.js" ]
+			, "Parent" : [ "Base" ]
+			, "Examples" : [
+				"var ref = {}\n\nJ.wait(\n 'Modules.dataService.read'\n , 'Constructors.LocalStorage'\n , ref\n , function(){\n\n   // now I have access to Modules.dataService.read\n   ref.read()\n\n   // and I have access to Constructors.LocalStorage\n   var ls = ref.LocalStorage(\"helloWorld\")\n\n})"
+				, "function init(ref) {\n  alert('finished loading')\n  console.log(ref)\n}\n\nJ.wait( \n  'Modules.dataService' \n  , 'window.dropDown' \n  , 'Constructors.Login' \n  , { }\n  , init)"
+				, "function init1(ref) {\n// awesome code here\n}\nfunction init2(ref) {\n// awesome code here\n}\nfunction init3(ref) {\n// awesome code here\n}\n\nvar ref = {}\n\nJ.wait('Modules.dataService.readDocuments', ref, init1)\n .wait('Modules.dataService.readClasses', ref, init2)\n .wait('DomContentLoaded', ref, init3)"
+			]
+			, "Description" : "This is the foundation of waiting until 'path' or 'paths' have loaded before launching callback. Notice the Ref object. Unlike requirejs which puts items into the callback's arguments, jDog modifies the reference object. Library items get added into this object as keys based on the name allowing code within the callback and beyond to access them." 
+			, "Definitions" : {
+				"Path" : "Path of the library item required, example 'Constructors.YourConstructor'"
+				, "Ref" : "Reference Object to pass all library items into"
+				, "Callback" : "Function to call when all is loaded"
+			}
+			, "Returns" : "J"
+		}
+
+		, {
+			"Name" : "add"
+			, "Usage" : [
+					[ "string Path", "expression Thing", "object Base"  ]
+				]
+			, "Tags" : [ "test", "synchronous" ]
+			, "Source" : [ "jdog.js" ]
+			, "Parent" : [ "Base" ]
+			, "Examples" : [
+				"J.add('Constructors.Login', function( $root, options ){  \n   var exports = {\n     $root : $root\n     , options : options\n   }\n\n  function privateFunction() {\n  }\n\n  exports.publicFunction = function() {\n  }\n\n   return exports \n })"
+				, "// assuming Select2 was defined in the same file above\nJ.add('Lib.Select2', Select2)"
+				, "J.add('Modules.home', (function(){  ...  }()))"
+				, "J.add('Properties.UserId', 12345)"
+				, "J.add('BaseClass', BaseClass(1234))"
+				, "J.add('BaseClass.ticker', new Ticker('tickerDiv'))"
+				, "// example returning \nvar ticker = J.add('BaseClass.ticker', new Ticker('tickerDiv'))"
+				, "J.add(\"Constructors.Login\", function($form, options) {\n\n options.showError = options.showError || false\n\n var dog = {\n  $form : $form\n  , $html : undefined // see below\n  , options : options\n }\n , ref = dog.ref = { }\n\n // employs the J events extension \n J.ext.events(dog, {\n  Success : []\n  , Fail : []\n })\n\n function build() {\n  var html = ''\n\n  html += \"&#x3c;div class='pad'&#x3e;\"\n  html += \"&#x3c;div class='row'&#x3e;\"\n  html += \"&#x3c;input type='text' name='UserName' /&#x3e;\"\n  html += \"&#x3c;/div&#x3e;\"\n  html += \"&#x3c;div class='row'&#x3e;\"\n  html += \"&#x3c;input type='text' name='Password' /&#x3e;\"\n  html += \"&#x3c;/div&#x3e;\"\n  html += \"&#x3c;div class='row'&#x3e;\"\n  html += \"&#x3c;button&#x3e;Submit&#x3c;/button&#x3e;\"\n  html += \"&#x3c;/div&#x3e;\"\n  html += \"&#x3c;/div&#x3e;\"\n\n  dog.$form.empty()\n  dog.$html = $(html).appendTo(dog.$form)\n }\n\n function events() {\n\n  ref.Validation(dog.$form, function success(data) {\n   dog.triggerEvent(\"Success\", data.id, data.name)\n  }, function fail(msg, err) {\n   dog.triggerEvent(\"Fail\", msg, err)\n  })\n\n }\n \n function init() {\n  build()\n  events()\n }\n\n J.wait(\n  \"Modules.dataService.read\"\n  , \"Constructors.Validation\"\n  , ref\n  , init)\n\n return dog\n\n})\n"
+			]
+			, "Description" : "This is the foundation of adding new items into the global name space. It's mean't to be extremely fast and flexible to add. If you have existing code for example, you can always add it after the fact as many of the following examples will demonstrate."
+			, "Definitions" : {
+				"Path" : "Path of the item added, example 'Constructors.YourConstructor'"
+				, "Thing" : "Any expression, ie code that resolves to a value"
+				, "Base" : "(optional) Base object to add to"
+			}
+			, "Returns" : "Thing"
+		}
+
+		, {
+			"Name" : "addWait"
+			, "Usage" : [
+					[ "string Path", "array WaitList", "function Callback" ]
+				]
+			, "Tags" : [ "wait", "module pattern", "asynchronous" ]
+			, "Source" : [ "jdog.js" ]
+			, "Parent" : [ "Base" ]
+			, "Examples" : [
+				"J.addWait( \n  'Modules.homePage' // path of thing being added \n  , [\n      'ajax'\n      , 'ready'\n      , 'Constructors.APIMethods'\n  ]\n  , function(ref) {\n \n   var exports = { \n     apiMethods : undefined // see below\n   }\n\n   exports.loadPage = function() {\n     ref.ajax(\"/pathToSomething\", {}, function(data) {\n       // ... lots of your code here\n       exports.apiMethods = ref.APIMethods(data)\n     })\n   }\n \n   return exports \n \n  })"
+			]
+			, "Description" : "Combines the functionality of add and wait into one function. This is useful for creating modules. For those familiar with requirejs this has an almost identical format, with the exception that the callback returns a single object instead of a list of arguments. This format is superior in many ways, as it is nolonger necessary to keep track of the order of arguments."
+			, "Definitions" : {
+				"Path" : "String - Path of the library item required, example 'Constructors.YourConstructor'"
+				, "WaitList" : "Array - list of other libraries required before callback is called"
+				, "Callback" : "Function to call when all is loaded"
+			}
+			, "Returns" : "J"
+		}
+
+		, {
+			"Name" : "addWait$"
+			, "Usage" : [
+					[ "string Path", "array WaitList", "function Callback" ]
+				]
+			, "Tags" : [ "wait", "module pattern", "jQuery", "asynchronous" ]
+			, "Source" : [ "jdog.js" ]
+			, "Parent" : [ "Base" ]
+			, "Examples" : [
+				"J.addWait$(\n 'Modules.jdogAPI'\n , [\n  'ajax'\n  , 'ready'\n  , 'Constructors.APIMethod'\n ],\n function(ref){ ... }))"
+				, "J.addWait$(\n \"Modules.home\"\n , [\n  \"Constructors.Validation\"\n  , \"Modules.tracking\"\n ]\n , function(ref) {\n\n  var dog = {\n   $loginForm : $(\"#LoginForm\")\n   , $submit : $(\"#LoginForm button.Submit\")\n  }\n\n  function events() {\n\n   dog.validation = ref.Validation(\n    $(\"#LoginForm\")\n    , function success(data) {\n     ref.tracking.track(\n      \"Submit Success\"\n      , data\n      , function() { window.location = \"/dashboard\" })\n    }\n    , function fail() {\n     ref.tracking.track(\"Submit Failed\") \n    })\n\n   dog.$loginForm.submit(function() {\n    ref.tracking.track(\"Submit\") \n   })\n\n  }\n\n  events()\n\n  return dog\n\n })\n"
+			]
+			, "Description" : "Combines the functionality of addWait with jQuery's document.ready. This is a useful function for creating modules with jQuery support."
+			, "Definitions" : {
+				"Path" : "String - Path of the library item required, example 'Constructors.YourConstructor'"
+				, "WaitList" : "Array - list of other libraries required before callback is called"
+				, "Callback" : "Function to call when all is loaded"
+			}
+			, "Returns" : "J"
+		}
+
+		, {
+			"Name" : "extend"
+			, "Usage" : [
+					[ "function( puppy, dog ) { ... }" ]
+					, [ "function( instance, proto ) { ... }" ]
+				]
+			, "Tags" : [ "extend", "module pattern", "extensions", "asynchronous" ]
+			, "Source" : [ "jdog.js" ]
+			, "Parent" : [ "Base" ]
+			, "Description" : "This is a function to extend the jDog library itself. Within the callback are the instance and prototype of J which allow you to overwrite or extend the functionality of jDog. By convention extensions have been named, J.ext.events for example."
+			, "Examples" : [
+				"J.extend(function(puppy, dog) {})"
+				, "J.extend(function(inst, proto) {})"
+				, "J.extend(function(inst, proto) {\n\n J.add(\"ext.events\", function(dog, eventMap) {\n\n  eventMap = eventMap || { }\n\n  dog.events = eventMap\n\n  dog._uniqueEventMap = { }\n\n  // name of event, function to be called on triggerEvent(name)\n  // events are unique, checking both the string of the function, \n  // and the callee.caller string as a key\n  dog.addEvent = function(name, func) {\n   var index\n   , key = func.toString() + arguments.callee.caller.toString()\n\n   // if the event type does not exist yet, create it\n   if (!dog.events[name]) dog.events[name] = []\n\n   if (!dog._uniqueEventMap[name]) dog._uniqueEventMap[name] = {}\n\n   // get the index from the array if there, otherwise undefined\n   index = dog._uniqueEventMap[name][key]\n\n   if (index !== undefined) {\n    // adds the function to the array, replacing the older one\n    dog.events[name].splice(index, 1, func)\n    return dog\n   } else {\n    index = dog.events[name].push(func)\n   }\n\n   // now add the index to the key\n   dog._uniqueEventMap[name][key] = (index-1)\n   return dog\n  }\n\n  dog.emptyEvent = function(name) {\n   if (!dog.events[name]) return\n   dog.events[name].length = 0\n  }\n\n  // triggers the functions within the named event array\n  dog.triggerEvent = function(name, args) {\n\n   if (!dog.events[name]) return\n   var events = dog.events[name]\n\n   // args = args || []\n   args = Array.prototype.slice.call(arguments)\n   args.splice(0,1)\n\n   if (events.length) {\n    for (var x in events) \n      (typeof events[x] === \"function\" && events[x].apply(this, args ))\n   }\n   return dog\n  }\n\n\n}, proto)\n\n})"
+			]
+			, "Definitions" : {
+				"J" : "J is a global variable with both instance properties and prototype properties"
+				, "Puppy" : "These are the instance properties (which can also access prototype)"
+				, "Dog" : "This is the prototype for J itself"
+			}
+			, "Returns" : "J"
+		}
+
 
 		, {
 			"Name" : "getType"

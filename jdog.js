@@ -290,23 +290,15 @@
 	// gather all of the required libraries in an array, push them into the anonymous function
 	dog.addWait$ = function addWait$(path, arrayOfRequiredLibraries, fun) {
 
-		var ref = { }
-		, snap = takeSnap(path, fun, null, arrayOfRequiredLibraries, ref)
-
-		ref.J = ref.PAGE = puppy
+		var args = arguments
 
 		dog.waitExists("jQuery", window, function() {
 			window.jQuery(d).ready(function() {
-				batchWaitRef(arrayOfRequiredLibraries, ref, function(ref) {
-					snap.thing = fun(ref) || {}
-					snap.thing._jdog = snap
-					dog.add(path, snap.thing, puppy, true)
-				}, path)
+				dog.addWait.apply(this, args)
 			})
 		})
 
 		return puppy
-
 	}
 
 
