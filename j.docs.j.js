@@ -11,7 +11,7 @@ J.add("Docs.J", {
 					, [ "Path", "Base" ]
 					, [ "Path", "Base", "Alternative" ]
 				]
-			, "Tags" : [ "exists", "synchronous" ]
+			, "Tags" : [ "synchronous" ]
 			, "Source" : [ "jdog.js" ]
 			, "Parent" : [ "Base" ]
 			, "Examples" : [
@@ -38,7 +38,7 @@ J.add("Docs.J", {
 					, [ "Path", "Callback" ]
 					, [ "Path", "Base", "Callback" ]
 				]
-			, "Tags" : [ "exists", "asynchronous" ]
+			, "Tags" : [ "asynchronous" ]
 			, "Source" : [ "jdog.js" ]
 			, "Parent" : [ "Base" ]
 			, "Examples" : [
@@ -61,7 +61,7 @@ J.add("Docs.J", {
 					[ "string Path", "function Callback" ]
 					, [ "string Path+", "object Ref", "function Callback" ]
 				]
-			, "Tags" : [ "wait", "asynchronous" ]
+			, "Tags" : [ "asynchronous" ]
 			, "Source" : [ "jdog.js" ]
 			, "Parent" : [ "Base" ]
 			, "Examples" : [
@@ -83,7 +83,7 @@ J.add("Docs.J", {
 			, "Usage" : [
 					[ "string Path", "expression Thing", "object Base"  ]
 				]
-			, "Tags" : [ "test", "synchronous" ]
+			, "Tags" : [ "synchronous" ]
 			, "Source" : [ "jdog.js" ]
 			, "Parent" : [ "Base" ]
 			, "Examples" : [
@@ -110,7 +110,7 @@ J.add("Docs.J", {
 			, "Usage" : [
 					[ "string Path", "array WaitList", "function Callback" ]
 				]
-			, "Tags" : [ "wait", "module pattern", "asynchronous" ]
+			, "Tags" : [ "module pattern", "asynchronous" ]
 			, "Source" : [ "jdog.js" ]
 			, "Parent" : [ "Base" ]
 			, "Examples" : [
@@ -130,7 +130,7 @@ J.add("Docs.J", {
 			, "Usage" : [
 					[ "string Path", "array WaitList", "function Callback" ]
 				]
-			, "Tags" : [ "wait", "module pattern", "jQuery", "asynchronous" ]
+			, "Tags" : [ "module pattern", "jQuery", "asynchronous" ]
 			, "Source" : [ "jdog.js" ]
 			, "Parent" : [ "Base" ]
 			, "Examples" : [
@@ -152,7 +152,7 @@ J.add("Docs.J", {
 					[ "function( puppy, dog ) { ... }" ]
 					, [ "function( instance, proto ) { ... }" ]
 				]
-			, "Tags" : [ "extend", "module pattern", "extensions", "asynchronous" ]
+			, "Tags" : [ "module pattern", "extensions" ]
 			, "Source" : [ "jdog.js" ]
 			, "Parent" : [ "Base" ]
 			, "Description" : "This is a function to extend the jDog library itself. Within the callback are the instance and prototype of J which allow you to overwrite or extend the functionality of jDog. By convention extensions have been named, J.ext.events for example."
