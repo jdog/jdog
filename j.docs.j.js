@@ -51,7 +51,7 @@ J.add("Docs.J", {
 				, "Base" : "optional - Object to search in, defaults to J"
 				, "Callback" : "Function to call when all is loaded"
 			}
-			, "Returns" : "undefined"
+			, "Returns" : "J"
 		}
 
 
