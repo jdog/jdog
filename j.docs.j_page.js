@@ -20,7 +20,7 @@ PAGE.add("Docs.jDog", {
 				, "<h4>require loads, jdog waits</h4>"
 				, "jDog takes a different approach. Instead of the main benefit being loading of modules, JDog waits for things to be loaded within objects."
 				, "<h4>traversing objects made easy</h4>"
-				, "<code>J.exists('window.long.path.to.very.deep.property')</code>"
+				, "<code>J.exists('window.long.path.to.property')</code>"
 				, "All files, scripts etc etc need to add themselves somewhere within the window object. JDog can find if they exist. It can also wait until they exist then fire a callback. That's in nutshell how it all works."
 				, "There are many other ways in which jDog greatly improves and takes the javascript module loading pattern to the next level."
 
