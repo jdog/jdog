@@ -19,23 +19,7 @@
 
 	<div class="wrapper">
 		<h1>犬JDOҨ</h1>
-		<div id="API">
-			<div>
-				<div id="jDog">
-					<div class="Title">
-						<a href="#" title="To Top" class="link linkBack">⌅</a>
-						<span class="Tags">about, loader</span><a name="jDog" href="#jDog" class="link" title="Link to Here">§</a>jDog
-					</div>
-
-					<!-- here to speed up the page -->
-
-					<div class="Guts"><div class="Source">Source: jdog.js</div><div class="Description"><div class="Label">Description:</div><p>jDog or simply J, creates a single global variable from which all of your project code can spring from. By stuffing everything into one explorable variable, J, you can dramatically simplify the process of building and debugging your project. Functions and Constructors can be easily tested in the console, and documentation is easier to generate and share.</p><p>Load jdog.js first either inline or as an external script. By design it is very small, 4k uncompressed minified.</p><p>jDog differs from AMD style loading, in many ways jDog is superior to AMD!</p><p>Bold claim? For backend javascript development using require() syntax makes sense. But in front end development where different modules or functions or constructors may load at different times, and with different payloads, and themselves require other libraries, writing require('nameOfLibrary') does not make sense at all.</p><p>Require.js tackles this problem, but it does it in a way that makes bundling difficult. Bundling scripts for those who do not know, is a process of grouping scripts into a single minified and compressed file to increase speed of the page. Most developers who use require.js for front end developement skip the step of bundling their javascript, costing a 40% or greater increase in bandwidth, not to mention speed.</p><p>The weakness is that AMD, ie Require.js assumes that a module is only a single file, with some kind of imports and exports. Even the modern ES6 uses a similar scheme, much closer to the Node way, but still, absent the power to bundle and save bandwidth. Why not just fix the problem? If you could name your Modules, add them to a namespace, then the file loading part can be done through the bundle or as script tags. That is what jDog does.</p></div><div class="Label">Definitions:</div><dl class="Definitions"><dt>jdog.js</dt><dd>Primary source for the J object and functionality</dd><dt>window.J or J</dt><dd>How to access and explor the jDog object</dd><dt>window.PAGE or PAGE</dt><dd>Same as window.J</dd><dt>J.add</dt><dd>Add a path to J object or to the object passed in.</dd><dt>J.exists</dt><dd>Checks if a path exists against J or the object passed in</dd><dt>J.wait</dt><dd>Waits for a path to exist, or paths, passing them into an object and callback.</dd><dt>J.addWait</dt><dd>Wait for some paths to exists, then add this new thing to J, or object you pass in.</dd><dt>J.getType</dt><dd>Utility to get the type of anything passed in, see below.</dd><dt>J.mapArguments</dt><dd>Utility to group all like arguments from an arguments object.</dd><dt>J.extend</dt><dd>Extend or overwrite J functionality itself.</dd><dt>J.logs.loaded</dt><dd>List of loaded 'Modules' and where they are waited for.</dd><dt>J.logs.waitQue</dt><dd>Lists all of the 'Modules' being waited for and their state</dd><dt>J.logs.waitMap</dt><dd>Lists what functions are waiting for.</dd><dt>J.use</dt><dd>Loads and then applies a mapped function with parameters.</dd></dl><div class="Examples"><div class="Label">Examples:</div><div class="Example"><span class="comment">// put this towards the top of the page, in the head </span>
-&lt;script src<span class="">=</span><span class="inQuotes">"jdog.js"</span>&gt;&lt;/script&gt;</div></div></div>
-
-
-				</div>
-			</div>
-		</div>
+		<div id="API"></div>
 	</div>
 </body>
 
@@ -48,13 +32,13 @@
 <script>
 
 	PAGE.addWait(
-		"Modules.localAPI"
+		"Modules.localAPI_jDog"
 		, [ "Modules.remoteAPI" ] // local inherits from remote
 		, function(ref) {
 
 			var dog = ref.remoteAPI
 
-			PAGE.loadScript(
+			PAGE.load(
 				"j.docs.j_page.js"
 				, "j.docs.j.js"
 			)
