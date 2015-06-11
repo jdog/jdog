@@ -1,4 +1,4 @@
-PAGE.add("Docs.jDog", {
+J.add("Docs.jDog", {
 	"jDog" : "version 3.0.0"
 	, "Methods" : [
 		{
