@@ -33,8 +33,8 @@ There are many other ways in which jDog greatly improves and takes the javascrip
 
 ```javascript
 J.exists(Path) 
-J.exists(Path, Base) 
-J.exists(Path, Base, Alternative) 
+J.exists(string Path, any Base) 
+J.exists(string Path, any Base, any Alternative) 
 ```
 Checks to see if this path exists inside the global J variable, or, alternatively, a specific object. Can be very powerful for preventing null reference errors.
 
@@ -79,8 +79,8 @@ J.exists('Properties.User', J, {}).LoggedIn = true
 
 ```javascript
 J.waitExists(Path) 
-J.waitExists(Path, Callback) 
-J.waitExists(Path, Base, Callback) 
+J.waitExists(string Path, function Callback) 
+J.waitExists(string Path, any Base, function Callback) 
 ```
 Waits for one item to load, then triggers callback. Base is optional
 
