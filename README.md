@@ -16,15 +16,15 @@ jDog differs from AMD style loading in many ways that make it superior. So super
 For nodejs development require() syntax makes sense. Everything is loaded ahead of time. But in front end development where different modules or functions or constructors may load at different times, and with different payloads, blocking the UI to wait for files to load is a bad practice.
 Require.js tackles this problem well with it's callback of required items, but it does it in a way that makes bundling difficult. In addition the library being loaded must conform to the AMD pattern. Many jQuery plugins or similar code not written this way simply wont work, or must be adapted to work.
 
-#####require loads, jdog waits
+#####jDog waits patiently
 
-jDog takes a different approach. Instead of the main benefit being loading of modules, JDog waits for things to be loaded within objects.
+jDog takes an innovative approach to loading modules. Instead of the focusing on loading, JDog focuses on waiting for things to be loaded. It has a powerful object traversing built in that allows you to look in deep nested properties.
 
 #####traversing objects made easy
 
 `J.exists('window.long.path.to.property')`
 
-All files, scripts etc etc need to add themselves somewhere within the window object. JDog can find if they exist. It can also wait until they exist then fire a callback. That's in nutshell how it all works.
+All files, scripts etc etc need to add themselves somewhere within the window object. Even requireJs stores named modules into a deeply nested object. JDog can find if they exist. It can also wait until they exist to fire a callback. With that simple and powerful technique much of the complexity of asynchronous loading can be resolved.
 There are many other ways in which jDog greatly improves and takes the javascript module loading pattern to the next level.
 
 #exists
