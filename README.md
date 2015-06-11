@@ -1,6 +1,3 @@
-# see github page demo
-http://jdog.github.io/jdog
-
 
 #Why
 
@@ -34,7 +31,7 @@ There are many other ways in which jDog greatly improves and takes the javascrip
 
 
 
-```
+```javascript
 J.exists(Path) 
 J.exists(Path, Base) 
 J.exists(Path, Base, Alternative) 
@@ -53,7 +50,7 @@ the item of the path, or undefined, or alternative
 
 ####Examples:
 
-```
+```javascript
 // checks J.Properties.User
 var user = J.exists('Properties.User')
 
@@ -80,7 +77,7 @@ J.exists('Properties.User', J, {}).LoggedIn = true
 
 
 
-```
+```javascript
 J.waitExists(Path) 
 J.waitExists(Path, Callback) 
 J.waitExists(Path, Base, Callback) 
@@ -99,7 +96,7 @@ J
 
 ####Examples:
 
-```
+```javascript
 J.waitExists('Properties.User', function(User) { ... })
 
 J.waitExists('Properties.User', window, function(User) { ... })
@@ -110,7 +107,7 @@ J.waitExists('Properties.User', window, function(User) { ... })
 
 
 
-```
+```javascript
 J.wait(string Path, function Callback) 
 J.wait(string Path+, object Ref, function Callback) 
 ```
@@ -128,7 +125,7 @@ J
 
 ####Examples:
 
-```
+```javascript
 var ref = {}
 
 J.wait(
@@ -179,7 +176,7 @@ J.wait('Modules.dataService.readDocuments', ref, init1)
 
 
 
-```
+```javascript
 J.add(string Path, expression Thing, object Base) 
 ```
 This is the foundation of adding new items into the global name space. It's mean't to be extremely fast and flexible to add. If you have existing code for example, you can always add it after the fact as many of the following examples will demonstrate.
@@ -196,7 +193,7 @@ Thing
 
 ####Examples:
 
-```
+```javascript
 J.add('Constructors.Login', function( $root, options ){  
    var exports = {
      $root : $root
@@ -294,7 +291,7 @@ J.add("Constructors.Login", function($form, options) {
 
 
 
-```
+```javascript
 J.addWait(string Path, array WaitList, function Callback) 
 ```
 Combines the functionality of add and wait into one function. This is useful for creating modules. For those familiar with requirejs this has an almost identical format, with the exception that the callback returns a single object instead of a list of arguments. This format is superior in many ways, as it is nolonger necessary to keep track of the order of arguments.
@@ -311,7 +308,7 @@ J
 
 ####Examples:
 
-```
+```javascript
 J.addWait( 
   'Modules.homePage' // path of thing being added 
   , [
@@ -342,7 +339,7 @@ J.addWait(
 
 
 
-```
+```javascript
 J.addWait$(string Path, array WaitList, function Callback) 
 ```
 Combines the functionality of addWait with jQuery's document.ready. This is a useful function for creating modules with jQuery support.
@@ -359,7 +356,7 @@ J
 
 ####Examples:
 
-```
+```javascript
 J.addWait$(
  'Modules.jdogAPI'
  , [
@@ -415,7 +412,7 @@ J.addWait$(
 
 
 
-```
+```javascript
 J.extend(function( puppy, dog ) { ... }) 
 J.extend(function( instance, proto ) { ... }) 
 ```
@@ -433,7 +430,7 @@ J
 
 ####Examples:
 
-```
+```javascript
 J.extend(function(puppy, dog) {})
 
 J.extend(function(inst, proto) {})
@@ -509,7 +506,7 @@ J.extend(function(inst, proto) {
 
 
 
-```
+```javascript
 J.getType(Thing) 
 ```
 This is an exposed internal utility that outputs the type of any kind of thing passed into it. Useful for Array vs Object, or all the kinds of HTML elements. Also has a special type for jQuery. If one of the major types, Array, String, Object, Boolean, Number, then it outputs as a 3 character string. Array - Arr. String - Str. Object - Obj. Boolean - Boo. Number - Num.
@@ -524,7 +521,7 @@ String
 
 ####Examples:
 
-```
+```javascript
 
  var dog = new Number()
  undefined
@@ -543,7 +540,7 @@ J.getType(elem)
 
 
 
-```
+```javascript
 J.mapArguments(arguments) 
 ```
 This is an internal utility that is exposed for those who need it. It outputs all of the arguments passed in grouped by their type. Primary types are output as 3 characters. Array - Arr. String - Str. Object - Obj. Boolean - Boo. Number - Num.
@@ -558,7 +555,7 @@ Object with arrays grouped by their type name
 
 ####Examples:
 
-```
+```javascript
  function test() { 
   var map = J.mapArguments(arguments) 
   console.log(map) 
@@ -575,4 +572,3 @@ Object with arrays grouped by their type name
  
 
 ```
-
