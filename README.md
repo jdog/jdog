@@ -18,7 +18,7 @@ Require.js tackles this problem well with it's callback of required items, but i
 
 #####jDog waits patiently
 
-jDog takes an innovative approach to loading modules. Instead of the focusing on loading, JDog focuses on waiting for things to be loaded. It has a powerful object traversing built in that allows you to look in deep nested properties.
+jDog takes an innovative approach to loading modules. Instead of focusing on loading, JDog focuses on waiting for things to be loaded. It assumes that you have loaded the files already in a bundled or as script tags. It can load files too, but only if you specify that as a requirement. Inside is a powerful object traversing engine that allows you to look in deep nested properties.
 
 #####traversing objects made easy
 
