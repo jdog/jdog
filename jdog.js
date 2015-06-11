@@ -7,24 +7,26 @@
 *
 * MIT License
 */
-;(function() {
+;(function(und) {
+
+	var global = global || this
 
 	/*
 	* the point of jDog is to be able to simplify development of javascript with the chrome console.
 	* Specifically by organizing everything into one common easily accessible global variable called J or PAGE.
 	*
-	* For convenience (window.PAGE, window.J, and window.jDog are interchangeable.
+	* For convenience (global.PAGE, global.J, and global.jDog are interchangeable.
 	*
 	* SEE https://jdog.io for all documentation
 	*/
 
 	var timerText = "finished loading"
 		, emptyFunction = new Function()
-		, preset = window.jdog_preset || {}
+		, preset = global.jdog_preset || {}
 		, hidden = preset.hidden ? { } : null
 
 	function ifConsole(fun) {
-		if (window.console) return (fun || emptyFunction)()
+		if (global.console && global.groupCollapsed) return (fun || emptyFunction)()
 	}
 
 	ifConsole( function() {
@@ -42,7 +44,7 @@
 		, speedOfInterval = preset.speedOfInterval || 30 // speed of interval called during waiting
 		, limit = preset.limit || 500
 		, onceCallbacks = []
-		, d = document
+		, d = global.document
 		, snap = _.snap = {}
 		, loadList = logs.loaded  = { }    // list all loaded libraries (and where they were used)
 		, waitList = logs.waitQue = { }    // show the loading que, unloaded show as false
@@ -85,10 +87,10 @@
 
 	// all existential queries are run through here, this is the foundation of the whole thing
 	var ex = dog.exists = function (path, base, alternate) {
-		if (typeof path === "undefined" || typeof path === "object") return
+		if (typeof path === und || typeof path === "object") return
 
 		if (path.search(/window\./) === 0)
-			base = window
+			base = global
 
 		var arr = path.split(".")
 			, x = 0
@@ -101,7 +103,7 @@
 			if (obj === undefined || obj === null) return alternate
 			x++
 		}
-		if (typeof obj !== "undefined")
+		if (typeof obj !== und)
 			return obj
 		else
 			return alternate
@@ -244,7 +246,7 @@
 			defaultBase = hidden || puppy
 		}
 
-		if (typeof path === "undefined" || typeof path === "object") return
+		if (typeof path === und || typeof path === "object") return
 		var arr = path.split(".")
 			, x = 0
 			, obj = base || defaultBase // again, for exporting this function change puppy
@@ -290,23 +292,15 @@
 	// gather all of the required libraries in an array, push them into the anonymous function
 	dog.addWait$ = function addWait$(path, arrayOfRequiredLibraries, fun) {
 
-		var ref = { }
-		, snap = takeSnap(path, fun, null, arrayOfRequiredLibraries, ref)
+		var args = arguments
 
-		ref.J = ref.PAGE = puppy
-
-		dog.waitExists("jQuery", window, function() {
-			window.jQuery(d).ready(function() {
-				batchWaitRef(arrayOfRequiredLibraries, ref, function(ref) {
-					snap.thing = fun(ref) || {}
-					snap.thing._jdog = snap
-					dog.add(path, snap.thing, puppy, true)
-				}, path)
+		dog.waitExists("jQuery", global, function() {
+			global.jQuery(d).ready(function() {
+				dog.addWait.apply(this, args)
 			})
 		})
 
 		return puppy
-
 	}
 
 
@@ -315,7 +309,7 @@
 		var shorten = "StringBooleanArrayObjectNumberFunction"
 			, ret
     if(thing===null) return "Null"
-		if(typeof thing === "object" && window.jQuery && thing instanceof window.jQuery) return "jQuery"
+		if(typeof thing === "object" && global.jQuery && thing instanceof global.jQuery) return "jQuery"
     ret = Object.prototype.toString.call(thing).slice(8, -1)
 		if (shorten.indexOf(ret) > -1)
 			return ret.substr(0,3)
@@ -467,18 +461,24 @@
 		return count
 	}
 
-	d.addEventListener("DOMContentLoaded", function(event) {
-		dog.DomContentLoaded = true
-		
-		// store jQuery for instanceof, in case it gets overriden by some other code
-		// this is used by getType, jQuery is so common it needs it's own type!
-		_.jQuery = window.jQuery
+	if (d)
+		d.addEventListener("DOMContentLoaded", function(event) {
+			dog.DomContentLoaded = true
+			
+			// store jQuery for instanceof, in case it gets overriden by some other code
+			// this is used by getType, jQuery is so common it needs it's own type!
+			_.jQuery = global.jQuery
 
-  })
+		})
 
 	_.version = "3.1.1"
 
-	// jDog and J are psynonymous
-	window.PAGE = window.J = puppy
+	// much of the functionality is for front end JS
+	// some features will totally break, like loading files
+	if (typeof module !== und)
+		module.exports = puppy
+	else
+		global.PAGE = global.J = puppy
 
-}())
+}("undefined"))
+
