@@ -8,24 +8,21 @@ Load jdog.js either inline or as an external script. By design it is very small,
 
 #####Front end JavaScript module loading landscape
 
-AMD module loading is close to being the standard for client side javascript (Requirejs). ES6 will ship with import and export functionality. But that does not mean a more refined and elegant approach is not possible, or even needed.
-jDog differs from AMD style loading in many ways that make it superior. So superior in fact, it's worth checking it out to see for yourself.
+AMD module style loading is close to being the standard for client side javascript (think RequireJS). ES6 will ship with import and export functionality. But that does not mean a more refined and elegant approach is not possible or even needed.
+jDog differs from AMD style loading in many ways that make it superior for development and production.
 
 #####Bold claim?
 
-For nodejs development require() syntax makes sense. Everything is loaded ahead of time. But in front end development where different modules or functions or constructors may load at different times, and with different payloads, blocking the UI to wait for files to load is a bad practice.
-Require.js tackles this problem well with it's callback of required items, but it does it in a way that makes bundling difficult. In addition the library being loaded must conform to the AMD pattern. Many jQuery plugins or similar code not written this way simply wont work, or must be adapted to work.
+For nodeJS require() syntax makes sense. Everything is loaded ahead of time. But in front end development where different objects or functions or properties of objects may load at different times, and with different payloads, blocking the UI to wait for files to load is a bad practice.
+RequireJS tackles this with define, where you map the path to the name. Generally this works, but it does it in a way that makes bundling difficult.
+In addition the library being loaded must conform to the AMD pattern. Many libraries not written this way simply wont work or must be adapted to work.
 
-#####jDog waits patiently
+#####jDog is better
 
-jDog takes an innovative approach to loading modules. Instead of focusing on loading, JDog focuses on waiting for things to be loaded. It assumes that you have loaded the files already in a bundled or as script tags. It can load files too, but only if you specify that as a requirement. Inside is a powerful object traversing engine that allows you to look in deep nested properties.
-
-#####traversing objects made easy
-
-`J.exists('window.long.path.to.property')`
-
+JDOG splits the problem in two. Loading the module is different from waiting for the module load. Inside jDog is a tiny but powerful object traversing engine that allows you to retrieve deeply nested properties.
 All files, scripts etc etc need to add themselves somewhere within the window object. Even requireJs stores named modules into a deeply nested object. JDog can find if they exist. It can also wait until they exist to fire a callback. With that simple and powerful technique much of the complexity of asynchronous loading can be resolved.
-There are many other ways in which jDog greatly improves and takes the javascript module loading pattern to the next level.
+And for production code, when everything is bundled together, it just works!
+There are many other ways in which jDog greatly improves and takes the javascript module loading pattern to the next level see examples below.
 
 #exists
 
