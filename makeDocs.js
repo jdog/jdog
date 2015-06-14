@@ -1,6 +1,27 @@
 var fs = require("fs")
-	, J = require("./jdog.js")
+	, J = require("./jdog.js") // creates global J
+	, text = ""
 
-debugger
+require("./j.constructors.buildDocMethod.js")
+require("./j.docs.j_page.js")
+require("./j.docs.j.js")
 
-fs.writeFileSync("README.md", "hello")
+buildAllSections([
+	"Docs.jDog"
+	, "Docs.J"
+])
+
+function buildAllSections(arr) {
+	arr.forEach(createSection)
+}
+
+function createSection(path) {
+	var data = J.exists(path)
+	data.Methods.forEach(build)
+}
+
+function build(item, index, arr) {
+	text += J.Constructors.BuildDocMethod(item)
+}
+
+fs.writeFileSync("README.md", text)

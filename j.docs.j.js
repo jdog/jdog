@@ -8,8 +8,8 @@ J.add("Docs.J", {
 			"Name" : "exists"
 			, "Usage" : [
 					[ "Path" ]
-					, [ "Path", "Base" ]
-					, [ "Path", "Base", "Alternative" ]
+					, [ "string Path", "any Base" ]
+					, [ "string Path", "any Base", "any Alternative" ]
 				]
 			, "Tags" : [ "synchronous" ]
 			, "Source" : [ "jdog.js" ]
@@ -35,8 +35,8 @@ J.add("Docs.J", {
 			"Name" : "waitExists"
 			, "Usage" : [
 					[ "Path" ]
-					, [ "Path", "Callback" ]
-					, [ "Path", "Base", "Callback" ]
+					, [ "string Path", "function Callback" ]
+					, [ "string Path", "any Base", "function Callback" ]
 				]
 			, "Tags" : [ "asynchronous" ]
 			, "Source" : [ "jdog.js" ]

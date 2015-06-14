@@ -7,15 +7,15 @@
 *
 * MIT License
 */
-;(function( und ) {
+;(function( und, o, jQ, ci ) {
 
 	var global = global || this
 
 	/*
 	* the point of jDog is to be able to simplify development of javascript with the chrome console.
-	* Specifically by organizing everything into one common easily accessible global variable called J or PAGE.
+	* Specifically by organizing everything into one common easily accessible global variable called J.
 	*
-	* For convenience (global.PAGE, global.J, and global.jDog are interchangeable.
+	* For convenience (global.J, and global.jDog are interchangeable.
 	*
 	* SEE https://jdog.io for all documentation
 	*/
@@ -23,6 +23,31 @@
 	var timerText = "finished loading"
 		, emptyFunction = new Function()
 		, preset = global.jdog_preset || {}
+		, JDog = function(){}                          // base constructor
+		, dog = JDog.prototype = { logs : {} } // base prototype
+		, puppy = new JDog()                           // base instance
+		, speedOfInterval = preset.speedOfInterval || 100 // speed of interval called during waiting
+		, limit = preset.limit || 500
+		, onceCallbacks = []
+		, d = global.document
+		, loadList = dog.logs.loaded  = { }    // list all loaded libraries (and where they were used)
+		, waitList = dog.logs.waitQue = { }    // show the loading que, unloaded show as false
+		, waitMap  = dog.logs.waitMap = { }    // reverse look at logs.loaded
+		, scriptNumber = 0                     // used while loading css / scripts
+
+
+	function done(onceCB) { 
+		// method to add to finished callback
+		onceCallbacks.push( onceCB || emptyFunction )
+	}
+
+	done(function() {
+		ifConsole(function() {
+			console.dir(J)
+			console.timeEnd(timerText)
+			console.groupEnd()
+		})
+	})
 
 	function ifConsole(fun) {
 
@@ -44,57 +69,11 @@
 		console.time(timerText)
 	})
 
-	var JDog = function(){}                          // base constructor
-		, dog = JDog.prototype = { logs : {}, _ : {} } // base prototype
-		, puppy = new JDog()                           // base instance
-		, speedOfInterval = preset.speedOfInterval || 100 // speed of interval called during waiting
-		, limit = preset.limit || 500
-		, onceCallbacks = []
-		, d = global.document
-		, snap = dog._.snap = {}
-		, loadList = dog.logs.loaded  = { }    // list all loaded libraries (and where they were used)
-		, waitList = dog.logs.waitQue = { }    // show the loading que, unloaded show as false
-		, waitMap  = dog.logs.waitMap = { }    // reverse look at logs.loaded
-		, scriptNumber = 0                     // used while loading css / scripts
-		, useMap = dog._.useMap = preset.useMap || {} // see dog.use, loads then applys function with parameters
-
-
-	dog.done = function(onceCB) {   // method to add to finished callback
-		onceCallbacks.push( onceCB || emptyFunction )
-	}
-
-	dog.done(function() {
-		ifConsole(function() {
-			console.dir(J)
-			console.timeEnd(timerText)
-			console.groupEnd()
-		})
-	})
-
-	// load jQuery from here if needed
-	useMap["jQuery"] = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"
-
-	dog.changeRoot = function(root) {
-
-		root = root || dog._.t || "/Scripts/test/"
-
-		// if you call this named function with use, load this script then wait and run it
-		dog._.t = root                    // base url for testScripts
-		useMap["test.attach"] = useMap["test.setTests"] = dog._.t + "j.test.attach.js"
-
-		for (var tm = String("test.runTest,test.run").split(','); tm.length;)
-			useMap[ tm.shift() ] = dog._.t + "j.test.js"
-
-		return puppy
-	}
-
-	dog.changeRoot()
-
 	// all existential queries are run through here, this is the foundation of the whole thing
-	var ex = dog.exists = function (path, base, alternate) {
-		if (typeof path === und || typeof path === "object") return
+	function exists (path, base, alternate) {
+		if (typeof path === und || typeof path === o) return
 
-		if (path.search(/window\./) === 0)
+		if (path.search(/window\./) === 0 || path.search(/global\./) === 0)
 			base = global
 
 		var arr = path.split(".")
@@ -116,7 +95,7 @@
 
 
 	// all waiting is done here
-	var waitExists = dog.waitExists = function(/* path, base, func, sourcePath */) {
+	function waitExists (/* path, base, func, sourcePath */) {
 		var thing
 			, arg = arguments
 			, count = 0
@@ -137,7 +116,7 @@
 
 		var source = getFuncName(sourcePath, arg)
 
-		thing = ex(path, base)
+		thing = exists(path, base)
 
 		// adding it to the load list
 		if (!waitMap[source])
@@ -162,18 +141,16 @@
 			count++
 			if (count > limit) {
 
-				ifConsole(function() {
-					console.warn(source + " could not find " + path)
-				})
+				global.console && console.warn(source + " could not find " + path)
 
-				clearInterval(interval)
+				ci(interval)
 				return
 			}
-			var thing = ex(path,base)
+			var thing = exists(path,base)
 			if (thing) {
 				;(func || emptyFunction)(thing)
 				waitList[path] = true
-				clearInterval(interval)
+				ci(interval)
 				runFinishedCallbacks()
 			}
 		}, speedOfInterval)
@@ -182,22 +159,40 @@
 
 
 	// this is the main method, split by the arguments
-	dog.wait = function(/* path, path2, path3, refObj, callback */) {
+	function wait (/* path, path2, path3, refObj, callback */) {
 		var map = mapArguments(arguments)
-		if (map.Arr && map.Obj) return batchWaitRef.apply((this), arguments)
-		if (map.Str && map.Obj && !map.Arr) return batchWait.apply(this, arguments)
-		else return waitExists.apply(this, arguments)
+			, ref = {}
+			, fun
+			, source = getFuncName(null, arguments, map)
+
+		if (!map.Fun)
+			return puppy
+		else
+			fun = map.Fun[0]
+		
+		if (map.Obj) 
+			ref = map.Obj[0]
+
+		if (map.Str && map.Str.length === 1 && !map.Obj) 
+			return waitExists.apply(this, arguments)
+
+		if (map.Arr) 
+			return batchWaitRef(map.Arr, ref, fun, source)
+
+		if (map.Str) 
+			return batchWaitRef(map.Str, ref, fun, source)
 	}
 
 
 	// internal function to load array elements
-	var batchWaitRef = function(arr, ref, callback, source) {
+	function batchWaitRef (arr, ref, callback, source) {
 
-		var source = getFuncName(source, arguments)
-			, count = 0
+		source = getFuncName(source, arguments)
+
+		var count = 0
 			, ref = ref || {}
 
-		ref.J = ref.PAGE = puppy
+		ref.J = puppy
 
 		if (!arr.length) {
 			(callback || emptyFunction)(ref)
@@ -209,38 +204,26 @@
 			waitExists(arr[index], function(f) {
 				count += 1
 				var name = arr[index].split(".").reverse()[0]
-				ref[name] = f
+
+				// adding long pathname for avoiding namespace collision
+				ref[arr[index]] = f
+
+				// only adds the short name if it's not already there
+				if (!ref[name])
+					ref[name] = f
+
+				// check if all things are loaded
 				if (count >= arr.length)
 					(callback || emptyFunction)(ref)
+
 			}, source)
 		}(x, arr))
 
 		return puppy
 	}
 
-
-	// split out items from arguments into array
-	var batchWait = function(/* str, str2, str3, obj, callback */) {
-
-		var arr = []
-			, ref = {}
-			, map = mapArguments(arguments)
-			, source = getFuncName("", arguments, map)
-			, callback
-
-		if (map.Fun) callback = map.Fun[0]
-		if (map.Str) arr = map.Str
-		if (map.Obj) ref = map.Obj[0]
-		if (map.Arr) arr.concat(map.Str)
-
-		ref.J = ref.PAGE = puppy
-
-		batchWaitRef(arr, ref, callback, source)
-		return puppy
-	}
-
 	// all adding is done using this
-	dog.add = function (path, thing, base, silent) {
+	function add (path, thing, base, silent) {
 
 		var defaultBase
 
@@ -251,11 +234,10 @@
 			defaultBase = puppy
 		}
 
-		if (typeof path === und || typeof path === "object") return
+		if (typeof path === und || typeof path === o) return
 		var arr = path.split(".")
 			, x = 0
-			, obj = base || defaultBase // again, for exporting this function change puppy
-			, snap = !silent ? takeSnap(path, null, thing, null, null) : null
+			, obj = base || defaultBase
 
 		if (arr.length < 1) return
 
@@ -277,38 +259,25 @@
 
 
 	// gather all of the required libraries in an array, push them into object, then callback( obj -- ref )
-	dog.addWait = function addWait (path, arrayOfRequiredLibraries, fun) {
+	function addWait (path, arrayOfRequiredLibraries, fun) {
 
-
-		var ref = { }
-		, snap = takeSnap(path, fun, null, arrayOfRequiredLibraries, ref)
-
-		ref.J = ref.PAGE = puppy
+		var ref = { J : puppy }
 
 		batchWaitRef(arrayOfRequiredLibraries, ref, function(ref) {
-			snap.thing = fun(ref)
-			snap.thing._jdog = snap
-			dog.add(path, snap.thing, puppy, true)
+			add(path, fun(ref), puppy, true)
 		}, path)
 		return puppy
 	}
 
 
 	// gather all of the required libraries in an array, push them into the anonymous function
-	dog.addWait$ = function addWait$(path, arrayOfRequiredLibraries, fun) {
+	function addWait$(path, arrayOfRequiredLibraries, fun) {
 
-		var ref = { }
-		, snap = takeSnap(path, fun, null, arrayOfRequiredLibraries, ref)
+		var args = arguments
 
-		ref.J = ref.PAGE = puppy
-
-		dog.waitExists("jQuery", global, function() {
-			global.jQuery(d).ready(function() {
-				batchWaitRef(arrayOfRequiredLibraries, ref, function(ref) {
-					snap.thing = fun(ref) || {}
-					snap.thing._jdog = snap
-					dog.add(path, snap.thing, puppy, true)
-				}, path)
+		waitExists(jQ, global, function(jQQ) {
+			jQQ.ready(function() {
+				addWait.apply(this, args)
 			})
 		})
 
@@ -316,31 +285,17 @@
 
 	}
 
-
 	// get the type of anything. Common types are shortened
-	var getType = dog.getType = function getType(thing) {
+	function getType (thing) {
 		var shorten = "StringBooleanArrayObjectNumberFunction"
 			, ret
     if(thing===null) return "Null"
-		if(typeof thing === "object" && global.jQuery && thing instanceof global.jQuery) return "jQuery"
+		if(typeof thing === o && global[jQ] && thing instanceof global[jQ]) return jQ
     ret = Object.prototype.toString.call(thing).slice(8, -1)
 		if (shorten.indexOf(ret) > -1)
 			return ret.substr(0,3)
 		else
 			return ret
-	}
-
-	function takeSnap(path, fun, thing, waitList, ref) {
-		if (arguments.length) {
-			snap.path = path
-			snap.fun = fun
-			snap.thing = thing
-			snap.waitList = waitList
-			snap.ref = ref
-		}
-		var clone = {}
-		for (var x in snap) clone[x] = snap[x]
-		return clone
 	}
 
 	// internal function to add to array
@@ -349,9 +304,8 @@
 		obj[name].push(item)
 	}
 
-
 	// create a hash of arguments sorted by type
-	var mapArguments = dog.mapArguments = function(args) {
+	function mapArguments (args) {
 		var map = {}
 
 		for(var y = 0; y < args.length; y++)
@@ -361,9 +315,9 @@
 	}
 
 	// method for loading files, currently not used for waiting
-	var load = dog.load = function load (/* pathToFile, allowCache */) {
+	function load (/* pathToFile, allowCache */) {
 
-		var map = dog.mapArguments(arguments)
+		var map = mapArguments(arguments)
 			, overwrite = map.Boo ? map.Boo[0] : false
 			, allowCache = map.Boo ? map.Boo[1] : false
 
@@ -374,12 +328,7 @@
 		}
 
 		var pathToFile = map.Str[0]
-
-		if (useMap[pathToFile]) {
-			return load( useMap[pathToFile] )
-		}
-
-		var type = pathToFile.slice(-3).toLowerCase()
+			, type = pathToFile.slice(-3).toLowerCase()
 			, fileId = pathToFile.replace(/\./g,"_").replace(/\//g, "_").replace(":","")
 			, existingElm = d.getElementById(fileId)
 
@@ -411,36 +360,8 @@
 
 	}
 
-	// setup a map of method paths, and files to load to get them
-	// this is used by page.test.js as a way of loading files on the fly without depending on them
-	// only useful for functions, not objects, since arguments get passed into them
-	dog.use = function use(/* name, argsArray */) {
-
-		var map = mapArguments(arguments)
-		, name = map.Str[0]
-		, lastSnap = takeSnap()
-
-		// force to be array inside arguments array
-		var argsArray = map.Arr ?
-			[lastSnap, map.Arr]
-			: [lastSnap, map.Str.slice(1)]
-
-		if (dog.exists(name))
-			return dog.exists(name).apply(this, argsArray)
-
-		if (useMap[name]) {
-			load.apply( this, [useMap[name]] )
-			.wait(name, function(thing) {
-				thing.apply(this, argsArray)
-			})
-		}
-
-		return puppy
-	}
-
-
 	// extend jDog
-	dog.extend = function extend(callback) {
+	function extend(callback) {
 		;(callback || emptyFunction)(puppy, dog)
 		return puppy
 	}
@@ -456,14 +377,22 @@
 	// used to log the function names used to load libraries
 	// we are using callee.caller here, this feature is being pushed out of javascript in ES5. What a shame when smart people take away cool features
 	function getFuncName(source, args, map) {
-		map = map || mapArguments(args)
-		source = source
-			|| ex("callee.caller.name", args)
-			|| ex("callee.caller.caller.name", args)
-			|| ex("Fun.1.name", map)
-			|| ex("Fun.0.name", map)
+
+		if (source)
+			return source
+
+		source = exists("callee.caller.name", args)
+			|| exists("callee.caller.caller.name", args)
+
+		if (!source) {
+			map = map || mapArguments(args)
+			source = exists("Fun.1.name", map)
+			|| exists("Fun.0.name", map)
 			|| "anonymous"
+		}
+
 		return source
+
 	}
 
 
@@ -474,23 +403,30 @@
 		return count
 	}
 
-
-	// store jQuery for instanceof, in case it gets overriden by some other code
-	// this is used by getType, jQuery is so common it needs it's own type!
-	dog._.jQuery = global.jQuery
-
 	if (d)
 		d.addEventListener("DOMContentLoaded", function(event) {
 			dog.DomContentLoaded = true
 		})
 
-	dog._.version = "3.1.0"
+	dog.version = "small3.2.0"
+
+	dog.done = done
+	dog.exists = exists
+	dog.waitExists = waitExists
+	dog.wait = wait
+	dog.add = add
+	dog.addWait = addWait
+	dog.addWait$ = addWait$
+	dog.getType = getType
+	dog.mapArguments = mapArguments
+	dog.load = load
+	dog.extend = extend
 
 	if (typeof module !== und && module.exports)
 		module.exports = puppy
 
-	global.PAGE = global.J = puppy
+	global.J = puppy
 
-}( "undefined" ))
+}( "undefined", "object", "jQuery", clearInterval ))
 
 

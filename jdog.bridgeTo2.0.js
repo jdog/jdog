@@ -5,9 +5,7 @@ J.extend( function( puppy, dog ) {
 	dog.add$ = dog.add
 	dog.loadScript = dog.loadStyle = dog.load
 
-	window.jDog = J
-
-	dog.changeRoot("/Scripts/jdogTest/")
+	window.jDog = window.PAGE = puppy
 
 	/*
 	dog.spawn = function() {
