@@ -1,0 +1,27 @@
+{
+  "name": "jdog",
+  "version": "3.2.1",
+  "description": "Global namespace and object traversal system",
+  "main": "jdog.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jdog/jdog.git"
+  },
+  "keywords": [
+    "Module",
+    "loader",
+    "namespace",
+    "object",
+    "traversal",
+    "exists"
+  ],
+  "author": "Justin Kempton",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jdog/jdog/issues"
+  },
+  "homepage": "https://github.com/jdog/jdog"
+}
