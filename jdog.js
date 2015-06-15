@@ -50,7 +50,7 @@
 		, speedOfInterval = preset.speedOfInterval || 100 // speed of interval called during waiting
 		, limit = preset.limit || 500
 		, onceCallbacks = []
-		, d = document
+		, d = global.document
 		, snap = dog._.snap = {}
 		, loadList = dog.logs.loaded  = { }    // list all loaded libraries (and where they were used)
 		, waitList = dog.logs.waitQue = { }    // show the loading que, unloaded show as false
@@ -479,9 +479,10 @@
 	// this is used by getType, jQuery is so common it needs it's own type!
 	dog._.jQuery = global.jQuery
 
-	d.addEventListener("DOMContentLoaded", function(event) {
-		dog.DomContentLoaded = true
-  })
+	if (d)
+		d.addEventListener("DOMContentLoaded", function(event) {
+			dog.DomContentLoaded = true
+		})
 
 	dog._.version = "3.1.0"
 
@@ -491,4 +492,3 @@
 		global.PAGE = global.J = puppy
 
 }( "undefined" ))
-
