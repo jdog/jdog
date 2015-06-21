@@ -1,0 +1,25 @@
+{
+  "name": "jdog",
+  "main": "jdog.js",
+  "version": "3.2.1",
+  "authors": [
+    "justinkempton <justin@kempton.com>"
+  ],
+  "description": "Global namespace and object traversal system, and module loader",
+  "keywords": [
+    "module",
+    "namespace",
+    "frontend",
+    "bundling",
+    "production"
+  ],
+  "license": "MIT",
+  "homepage": "http://jdog.github.io/jdog/",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

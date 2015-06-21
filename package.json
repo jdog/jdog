@@ -1,6 +1,6 @@
 {
   "name": "jdog",
-  "version": "3.2.1",
+  "version": "3.2.2",
   "description": "Global namespace and object traversal system",
   "main": "jdog.js",
   "scripts": {
