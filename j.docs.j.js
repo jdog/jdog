@@ -12,7 +12,7 @@ J.add("Docs.J", {
 					, [ "string Path", "any Base", "any Alternative" ]
 				]
 			, "Tags" : [ "synchronous" ]
-			, "Source" : [ "jdog.js" ]
+			, "Source" : [ "//github.com/jdog/jdog" ]
 			, "Parent" : [ "Base" ]
 			, "Examples" : [
 				"// checks J.Properties.User\nvar user = J.exists('Properties.User')"
@@ -39,7 +39,7 @@ J.add("Docs.J", {
 					, [ "string Path", "any Base", "function Callback" ]
 				]
 			, "Tags" : [ "asynchronous" ]
-			, "Source" : [ "jdog.js" ]
+			, "Source" : [ "//github.com/jdog/jdog" ]
 			, "Parent" : [ "Base" ]
 			, "Examples" : [
 				"J.waitExists('Properties.User', function(User) { ... })"
@@ -62,7 +62,7 @@ J.add("Docs.J", {
 					, [ "string Path+", "object Ref", "function Callback" ]
 				]
 			, "Tags" : [ "asynchronous" ]
-			, "Source" : [ "jdog.js" ]
+			, "Source" : [ "//github.com/jdog/jdog" ]
 			, "Parent" : [ "Base" ]
 			, "Examples" : [
 				"var ref = {}\n\nJ.wait(\n 'Modules.dataService.read'\n , 'Constructors.LocalStorage'\n , ref\n , function(){\n\n   // now I have access to Modules.dataService.read\n   ref.read()\n\n   // and I have access to Constructors.LocalStorage\n   var ls = ref.LocalStorage(\"helloWorld\")\n\n})"
@@ -84,7 +84,7 @@ J.add("Docs.J", {
 					[ "string Path", "expression Thing", "object Base"  ]
 				]
 			, "Tags" : [ "synchronous" ]
-			, "Source" : [ "jdog.js" ]
+			, "Source" : [ "//github.com/jdog/jdog" ]
 			, "Parent" : [ "Base" ]
 			, "Examples" : [
 				"J.add('Constructors.Login', function( $root, options ){  \n   var exports = {\n     $root : $root\n     , options : options\n   }\n\n  function privateFunction() {\n  }\n\n  exports.publicFunction = function() {\n  }\n\n   return exports \n })"
@@ -111,7 +111,7 @@ J.add("Docs.J", {
 					[ "string Path", "array WaitList", "function Callback" ]
 				]
 			, "Tags" : [ "module pattern", "asynchronous" ]
-			, "Source" : [ "jdog.js" ]
+			, "Source" : [ "//github.com/jdog/jdog" ]
 			, "Parent" : [ "Base" ]
 			, "Examples" : [
 				"J.addWait( \n  'Modules.homePage' // path of thing being added \n  , [\n      'ajax'\n      , 'ready'\n      , 'Constructors.APIMethods'\n  ]\n  , function(ref) {\n \n   var exports = { \n     apiMethods : undefined // see below\n   }\n\n   exports.loadPage = function() {\n     ref.ajax(\"/pathToSomething\", {}, function(data) {\n       // ... lots of your code here\n       exports.apiMethods = ref.APIMethods(data)\n     })\n   }\n \n   return exports \n \n  })"
@@ -131,7 +131,7 @@ J.add("Docs.J", {
 					[ "string Path", "array WaitList", "function Callback" ]
 				]
 			, "Tags" : [ "module pattern", "jQuery", "asynchronous" ]
-			, "Source" : [ "jdog.js" ]
+			, "Source" : [ "//github.com/jdog/jdog" ]
 			, "Parent" : [ "Base" ]
 			, "Examples" : [
 				"J.addWait$(\n 'Modules.jdogAPI'\n , [\n  'ajax'\n  , 'ready'\n  , 'Constructors.APIMethod'\n ],\n function(ref){ ... }))"
@@ -153,7 +153,7 @@ J.add("Docs.J", {
 					, [ "function( instance, proto ) { ... }" ]
 				]
 			, "Tags" : [ "module pattern", "extensions" ]
-			, "Source" : [ "jdog.js" ]
+			, "Source" : [ "//github.com/jdog/jdog" ]
 			, "Parent" : [ "Base" ]
 			, "Description" : "This is a function to extend the jDog library itself. Within the callback are the instance and prototype of J which allow you to overwrite or extend the functionality of jDog. By convention extensions have been named, J.ext.events for example."
 			, "Examples" : [
@@ -176,7 +176,7 @@ J.add("Docs.J", {
 					[ "Thing" ]
 				]
 			, "Tags" : [ "utility", "synchronous" ]
-			, "Source" : [ "jdog.js" ]
+			, "Source" : [ "//github.com/jdog/jdog" ]
 			, "Parent" : [ "Base" ]
 			, "Examples" : [
 				"\n var dog = new Number()\n undefined\n J.getType(dog)\n \"Num\"\n "
@@ -194,7 +194,7 @@ J.add("Docs.J", {
 					[ "arguments" ]
 				]
 			, "Tags" : [ "utility", "synchronous" ]
-			, "Source" : [ "jdog.js" ]
+			, "Source" : [ "//github.com/jdog/jdog" ]
 			, "Parent" : [ "Base" ]
 			, "Examples" : [
 
