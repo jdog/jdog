@@ -1,4 +1,5 @@
 
+
 #Why
 
 jDog or simply J creates a single global variable from which all project code can spring. By stuffing everything into one explorable variable, J dramatically simplifies the process of building and debugging your project. Functions can be easily tested in the console, Properties checked, documentation created etc.
@@ -569,3 +570,5 @@ Object with arrays grouped by their type name
  
 
 ```
+
+// justin kempton
