@@ -6,6 +6,8 @@ J.addWait(
 		var dog = ref.remoteAPI
 			, root = location.host === "jdog.github.io" ? "//jdog.github.io/jdog/" : ""
 
+		root += "docs/"
+
 		PAGE.load(
 			root + "j.docs.j_page.js"
 			, root + "j.docs.j.js"

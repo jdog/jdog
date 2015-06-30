@@ -1,5 +1,5 @@
 var fs = require("fs")
-	, J = require("./jdog.js") // creates global J
+	, J = require("../jdog.js") // creates global J
 	, text = ""
 
 require("./j.constructors.buildDocMethod.js")
@@ -24,4 +24,4 @@ function build(item, index, arr) {
 	text += J.Constructors.BuildDocMethod(item)
 }
 
-fs.writeFileSync("README.md", text)
+fs.writeFileSync("../README.md", text)
