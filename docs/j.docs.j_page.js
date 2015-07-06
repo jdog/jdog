@@ -9,13 +9,15 @@ J.add("Docs.jDog", {
 			, "Description" : [
 
 				"jDog or simply J creates a single global variable from which all project code can spring. "
+				+ " It's designed to work hand in hand with the console, allowing you to easily explore all of your code."
 				+ " By stuffing everything into one explorable variable J, it dramatically simplifies the process "
-				+ " of building and debugging your project. Functions can be easily tested in the console, "
+				+ " of building and debugging a project. Functions can be easily tested, "
 				+ " Properties checked, documentation created etc."
 
 				, "Load jdog.js either inline or as an external script. By design it is very small, "
 				+ " 4k uncompressed minified for lightning fast client side javascript."
 
+					/*
 				, "<h4>The front end JavaScript module loading landscape</h4>"
 
 				, "AMD module style loading is close to being the standard for client side javascript "
@@ -53,6 +55,7 @@ J.add("Docs.jDog", {
 
 				, "There are many other ways in which jDog greatly improves and takes the javascript "
 				+ " module loading pattern to the next level see examples below."
+				*/
 
 			]
 		}
